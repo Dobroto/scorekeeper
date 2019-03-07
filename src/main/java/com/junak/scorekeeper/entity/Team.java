@@ -19,8 +19,11 @@ public class Team {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "team_name")
-    private String teamName;
+    @Column(name = "team_name_long")
+    private String teamNameLong;
+
+    @Column(name = "team_name_short")
+    private String teamNameShort;
 
     @OneToMany(mappedBy = "team",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
@@ -32,7 +35,7 @@ public class Team {
     }
 
     public Team(String teamName) {
-        this.teamName = teamName;
+        this.teamNameLong = teamName;
     }
 
     public int getId() {
@@ -43,12 +46,20 @@ public class Team {
         this.id = id;
     }
 
-    public String getTeamName() {
-        return teamName;
+    public String getTeamNameLong() {
+        return teamNameLong;
     }
 
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
+    public void setTeamNameLong(String teamName) {
+        this.teamNameLong = teamName;
+    }
+
+    public String getTeamNameShort() {
+        return teamNameShort;
+    }
+
+    public void setTeamNameShort(String teamNameShort) {
+        this.teamNameShort = teamNameShort;
     }
 
     public List<Player> getPlayers() {

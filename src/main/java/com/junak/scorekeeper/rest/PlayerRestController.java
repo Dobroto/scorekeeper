@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.Player;
+import com.junak.scorekeeper.rest.errors.PlayerNotFoundException;
 import com.junak.scorekeeper.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class PlayerRestController {
         return playerService.findAll();
     }
 
-    @GetMapping("/players/team={teamId}")
+    @GetMapping("/players/team/{teamId}")
     public List<Player> findAllTeamPlayers(@PathVariable int teamId) {
         return playerService.findAllTeamPlayers(teamId);
     }
@@ -36,7 +37,7 @@ public class PlayerRestController {
         Player thePlayer = playerService.findById(playerId);
 
         if (thePlayer == null) {
-            throw new RuntimeException("Player id not found - " + playerId);
+            throw new PlayerNotFoundException("Player id not found - " + playerId);
         }
 
         return thePlayer;
@@ -77,7 +78,7 @@ public class PlayerRestController {
         // throw exception if null
 
         if (tempPlayer == null) {
-            throw new RuntimeException("Employee id not found - " + playerId);
+            throw new PlayerNotFoundException("Player id not found - " + playerId);
         }
 
         playerService.deleteById(playerId);
