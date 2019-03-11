@@ -1,50 +1,56 @@
 package com.junak.scorekeeper.service;
 
-import com.junak.scorekeeper.dao.PlayerDAO;
+import com.junak.scorekeeper.dao.PlayerRepository;
 import com.junak.scorekeeper.entity.Player;
+import com.junak.scorekeeper.rest.errors.PlayerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class PlayerServiceImpl implements PlayerService{
-    private PlayerDAO playerDAO;
+public class PlayerServiceImpl implements PlayerService {
+    private PlayerRepository playerRepository;
 
     @Autowired
-    public PlayerServiceImpl(PlayerDAO thePlayerDAO) {
-        playerDAO = thePlayerDAO;
+    public PlayerServiceImpl(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 
     @Override
-    @Transactional
     public List<Player> findAllTeamPlayers(int teamId) {
-        return playerDAO.findAllTeamPlayers(teamId);
+        return playerRepository.findAllTeamPlayers(teamId);
     }
 
     @Override
-    @Transactional
     public List<Player> findAll() {
-        return playerDAO.findAll();
+        return playerRepository.findAll();
     }
 
     @Override
-    @Transactional
     public Player findById(int theId) {
-        return playerDAO.findById(theId);
+        Optional<Player> result = playerRepository.findById(theId);
+
+        Player thePlayer = null;
+
+        if (result.isPresent()) {
+            thePlayer = result.get();
+        } else {
+            throw new PlayerNotFoundException("Player id not found - " + theId);
+        }
+
+        return thePlayer;
     }
 
     @Override
-    @Transactional
     public void save(Player thePlayer) {
-        playerDAO.save(thePlayer);
+        playerRepository.save(thePlayer);
     }
 
     @Override
-    @Transactional
     public void deleteById(int theId) {
-        playerDAO.deleteById(theId);
+        playerRepository.deleteById(theId);
     }
 
 }

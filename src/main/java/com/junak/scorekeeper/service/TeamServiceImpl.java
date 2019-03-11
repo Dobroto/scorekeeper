@@ -1,43 +1,51 @@
 package com.junak.scorekeeper.service;
 
-import com.junak.scorekeeper.dao.TeamDAO;
+import com.junak.scorekeeper.dao.TeamRepository;
 import com.junak.scorekeeper.entity.Team;
+import com.junak.scorekeeper.rest.errors.TeamNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeamServiceImpl implements TeamService {
-    private TeamDAO teamDAO;
+    private TeamRepository teamRepository;
 
     @Autowired
-    public TeamServiceImpl (TeamDAO teamDAO){
-        this.teamDAO = teamDAO;
+    public TeamServiceImpl (TeamRepository teamRepository){
+        this.teamRepository = teamRepository;
     }
 
     @Override
-    @Transactional
     public List<Team> findAll() {
-        return teamDAO.findAll();
+        return teamRepository.findAll();
     }
 
     @Override
-    @Transactional
     public Team findById(int id) {
-        return teamDAO.findById(id);
+        Optional<Team> result = teamRepository.findById(id);
+
+        Team theTeam = null;
+
+        if (result.isPresent()) {
+            theTeam = result.get();
+        } else {
+            throw new TeamNotFoundException("Team id not found - " + id);
+        }
+
+        return theTeam;
     }
 
     @Override
-    @Transactional
     public void save(Team team) {
-        teamDAO.save(team);
+        teamRepository.save(team);
     }
 
     @Override
-    @Transactional
     public void deleteById(int id) {
-        teamDAO.deleteById(id);
+        teamRepository.deleteById(id);
     }
 }
