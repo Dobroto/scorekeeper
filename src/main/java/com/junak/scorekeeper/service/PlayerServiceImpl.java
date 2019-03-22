@@ -2,7 +2,7 @@ package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.PlayerRepository;
 import com.junak.scorekeeper.entity.Player;
-import com.junak.scorekeeper.rest.errors.PlayerNotFoundException;
+import com.junak.scorekeeper.rest.error.player_error.PlayerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

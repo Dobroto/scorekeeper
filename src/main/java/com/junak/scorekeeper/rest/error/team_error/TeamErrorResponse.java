@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.rest.errors;
+package com.junak.scorekeeper.rest.error.team_error;
 
 public class TeamErrorResponse {
     private int status;

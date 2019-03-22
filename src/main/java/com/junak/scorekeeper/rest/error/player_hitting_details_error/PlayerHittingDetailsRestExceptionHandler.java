@@ -1,5 +1,4 @@
-package com.junak.scorekeeper.rest.errors;
-
+package com.junak.scorekeeper.rest.error.player_hitting_details_error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,15 +6,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class PlayerRestExceptionHandler {
+public class PlayerHittingDetailsRestExceptionHandler {
     // Add an exception handler for CustomerNotFoundException
 
     @ExceptionHandler
-    public ResponseEntity<PlayerErrorResponse> handleException(PlayerNotFoundException exc) {
+    public ResponseEntity<PlayerHittingDetailsErrorResponse> handleException(PlayerHittingDetailsNotFoundException exc) {
 
         // create CustomerErrorResponse
 
-        PlayerErrorResponse error = new PlayerErrorResponse(
+        PlayerHittingDetailsErrorResponse error = new PlayerHittingDetailsErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 exc.getMessage(),
                 System.currentTimeMillis());
@@ -29,11 +28,11 @@ public class PlayerRestExceptionHandler {
     // Add another exception handler ... to catch any exception (catch all)
 
     @ExceptionHandler
-    public ResponseEntity<PlayerErrorResponse> handleException(Exception exc) {
+    public ResponseEntity<PlayerHittingDetailsErrorResponse> handleException(Exception exc) {
 
         // create CustomerErrorResponse
 
-        PlayerErrorResponse error = new PlayerErrorResponse(
+        PlayerHittingDetailsErrorResponse error = new PlayerHittingDetailsErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 exc.getMessage(),
                 System.currentTimeMillis());

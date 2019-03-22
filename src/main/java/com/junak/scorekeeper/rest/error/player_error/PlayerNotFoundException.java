@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.rest.errors;
+package com.junak.scorekeeper.rest.error.player_error;
 
 public class PlayerNotFoundException extends RuntimeException {
 

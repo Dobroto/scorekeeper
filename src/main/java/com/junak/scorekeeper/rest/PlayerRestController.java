@@ -1,7 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.Player;
-import com.junak.scorekeeper.rest.errors.PlayerNotFoundException;
+import com.junak.scorekeeper.rest.error.player_error.PlayerNotFoundException;
 import com.junak.scorekeeper.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +43,7 @@ public class PlayerRestController {
         return thePlayer;
     }
 
-    // add mapping for POST /players - add new employee
+    // add mapping for POST /players - add new player
 
     @PostMapping("/players")
     public Player addPlayer(@RequestBody Player thePlayer) {
