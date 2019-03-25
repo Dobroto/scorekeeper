@@ -30,6 +30,4 @@ public class PlayerHittingDetailsRestController {
     public PlayerHittingDetails getPlayerHittingDetails(@PathVariable int playerId){
         return playerHittingDetailsService.getPlayerHittingDetails(playerId);
     }
-
-
 }
