@@ -30,6 +30,16 @@ public class Team {
                     CascadeType.DETACH, CascadeType.REFRESH})
     private List<Player> players;
 
+//    @OneToMany(mappedBy = "team",
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+//                    CascadeType.DETACH, CascadeType.REFRESH})
+//    private List<Game> homeGames;
+//
+//    @OneToMany(mappedBy = "team",
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+//                    CascadeType.DETACH, CascadeType.REFRESH})
+//    private List<Game> visitorGames;
+
     public Team() {
 
     }

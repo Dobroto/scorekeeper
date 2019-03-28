@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class PlayerPitchingDetailsRestExceptionHandler {
-    // Add an exception handler for CustomerNotFoundException
+    // Add an exception handler for PlayerPitchingDetailsNotFoundException
 
     @ExceptionHandler
     public ResponseEntity<PlayerPitchingDetailsErrorResponse> handleException(PlayerPitchingDetailsNotFoundException exc) {
 
-        // create CustomerErrorResponse
+        // create PlayerPitchingDetailsErrorResponse
 
         PlayerPitchingDetailsErrorResponse error = new PlayerPitchingDetailsErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -30,7 +30,7 @@ public class PlayerPitchingDetailsRestExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<PlayerPitchingDetailsErrorResponse> handleException(Exception exc) {
 
-        // create CustomerErrorResponse
+        // create PlayerPitchingDetailsErrorResponse
 
         PlayerPitchingDetailsErrorResponse error = new PlayerPitchingDetailsErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),

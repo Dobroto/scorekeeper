@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class PlayerRestExceptionHandler {
-    // Add an exception handler for CustomerNotFoundException
+    // Add an exception handler for PlayerNotFoundException
 
     @ExceptionHandler
     public ResponseEntity<PlayerErrorResponse> handleException(PlayerNotFoundException exc) {
 
-        // create CustomerErrorResponse
+        // create PlayerErrorResponse
 
         PlayerErrorResponse error = new PlayerErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -31,7 +31,7 @@ public class PlayerRestExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<PlayerErrorResponse> handleException(Exception exc) {
 
-        // create CustomerErrorResponse
+        // create PlayerErrorResponse
 
         PlayerErrorResponse error = new PlayerErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),

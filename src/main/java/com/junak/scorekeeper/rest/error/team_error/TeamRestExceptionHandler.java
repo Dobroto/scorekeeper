@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class TeamRestExceptionHandler {
-    // Add an exception handler for CustomerNotFoundException
+    // Add an exception handler for TeamNotFoundException
 
     @ExceptionHandler
     public ResponseEntity<TeamErrorResponse> handleException(TeamNotFoundException exc) {
 
-        // create CustomerErrorResponse
+        // create TeamErrorResponse
 
         TeamErrorResponse error = new TeamErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -30,7 +30,7 @@ public class TeamRestExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<TeamErrorResponse> handleException(Exception exc) {
 
-        // create CustomerErrorResponse
+        // create TeamErrorResponse
 
         TeamErrorResponse error = new TeamErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),

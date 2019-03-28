@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "player")
@@ -31,6 +32,23 @@ public class Player {
 
     @Column(name = "position")
     private String position;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="player_pitching_details")
+    private PlayerPitchingDetails pitchingDetails;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="player_hitting_details")
+    private PlayerHittingDetails hittingDetails;
+
+//    @OneToOne(cascade=CascadeType.ALL)
+//    @JoinColumn(name="player_fielding_details")
+//    private PlayerFieldingDetails fieldingDetails;
+
+//    @OneToMany(mappedBy = "player",
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+//                    CascadeType.DETACH, CascadeType.REFRESH})
+//    private List<PlayerFieldingDetails> homeTeamFieldingDetails;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -105,6 +123,38 @@ public class Player {
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    public PlayerPitchingDetails getPitchingDetails() {
+        return pitchingDetails;
+    }
+
+    public void setPitchingDetails(PlayerPitchingDetails pitchingDetails) {
+        this.pitchingDetails = pitchingDetails;
+    }
+
+    public PlayerHittingDetails getHittingDetails() {
+        return hittingDetails;
+    }
+
+    public void setHittingDetails(PlayerHittingDetails hittingDetails) {
+        this.hittingDetails = hittingDetails;
+    }
+
+//    public PlayerFieldingDetails getFieldingDetails() {
+//        return fieldingDetails;
+//    }
+//
+//    public void setFieldingDetails(PlayerFieldingDetails fieldingDetails) {
+//        this.fieldingDetails = fieldingDetails;
+//    }
+
+//    public List<PlayerFieldingDetails> getHomeTeamFieldingDetails() {
+//        return homeTeamFieldingDetails;
+//    }
+//
+//    public void setHomeTeamFieldingDetails(List<PlayerFieldingDetails> homeTeamFieldingDetails) {
+//        this.homeTeamFieldingDetails = homeTeamFieldingDetails;
+//    }
 
     @Override
     public String toString() {

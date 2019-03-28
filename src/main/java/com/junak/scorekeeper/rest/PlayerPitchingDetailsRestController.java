@@ -17,17 +17,17 @@ public class PlayerPitchingDetailsRestController {
     private PlayerPitchingDetailsService playerPitchingDetailsService;
 
     @Autowired
-    public PlayerPitchingDetailsRestController(PlayerPitchingDetailsService playerPitchingDetailsService){
+    public PlayerPitchingDetailsRestController(PlayerPitchingDetailsService playerPitchingDetailsService) {
         this.playerPitchingDetailsService = playerPitchingDetailsService;
     }
 
     @GetMapping("/pitchingDetails")
-    public List<PlayerPitchingDetails> findAll(){
+    public List<PlayerPitchingDetails> findAll() {
         return playerPitchingDetailsService.findAll();
     }
 
     @GetMapping("/pitchingDetails/{playerId}")
-    public PlayerPitchingDetails getPlayerPitchingDetails(@PathVariable int playerId){
+    public PlayerPitchingDetails getPlayerPitchingDetails(@PathVariable int playerId) {
         return playerPitchingDetailsService.getPlayerPitchingDetails(playerId);
     }
 }

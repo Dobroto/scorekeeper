@@ -80,10 +80,20 @@ public class PlayerHittingDetails {
     @Column(name = "OPS")
     private double onBaseSlugging;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "player_id")
+    @OneToOne(mappedBy = "hittingDetails",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.PERSIST, CascadeType.REFRESH})
     private Player player;
+
+//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+//            CascadeType.DETACH, CascadeType.REFRESH})
+//    @JoinColumn(name = "home_game_id")
+//    private Game homeTeamGame;
+//
+//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+//            CascadeType.DETACH, CascadeType.REFRESH})
+//    @JoinColumn(name = "visitor_game_id")
+//    private Game visitorTeamGame;
 
     public PlayerHittingDetails(){
 
