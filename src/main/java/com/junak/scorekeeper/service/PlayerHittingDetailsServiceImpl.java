@@ -23,33 +23,23 @@ public class PlayerHittingDetailsServiceImpl implements PlayerHittingDetailsServ
         return playerHittingDetailsRepository.findAll();
     }
 
-//    @Override
-//    public PlayerHittingDetails findById(int id) {
-//        Optional<PlayerHittingDetails> result = playerHittingDetailsRepository.findById(id);
-//
-//        PlayerHittingDetails thePlayerHittingDetails = null;
-//
-//        if (result.isPresent()) {
-//            thePlayerHittingDetails = result.get();
-//        } else {
-//            throw new PlayerHittingDetailsNotFoundException("Player hitting details id not found - " + id);
-//        }
-//
-//        return thePlayerHittingDetails;
-//    }
-//
-//    @Override
-//    public void save(PlayerHittingDetails details) {
-//        playerHittingDetailsRepository.save(details);
-//    }
-//
-//    @Override
-//    public void deleteById(int id) {
-//        playerHittingDetailsRepository.deleteById(id);
-//    }
+    @Override
+    public PlayerHittingDetails findById(int id) {
+        Optional<PlayerHittingDetails> result = playerHittingDetailsRepository.findById(id);
+
+        PlayerHittingDetails thePlayerHittingDetails = null;
+
+        if (result.isPresent()) {
+            thePlayerHittingDetails = result.get();
+        } else {
+            throw new PlayerHittingDetailsNotFoundException("Player hitting details id not found - " + id);
+        }
+
+        return thePlayerHittingDetails;
+    }
 
     @Override
-    public PlayerHittingDetails getPlayerHittingDetails(int playerId) {
-        return playerHittingDetailsRepository.getPlayerHittingDetails(playerId);
+    public void deleteById(int id) {
+        playerHittingDetailsRepository.deleteById(id);
     }
 }

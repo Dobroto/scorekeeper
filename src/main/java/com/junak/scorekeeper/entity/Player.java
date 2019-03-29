@@ -32,6 +32,18 @@ public class Player {
     @Column(name = "position")
     private String position;
 
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="player_hitting_details_id")
+    private PlayerHittingDetails playerHittingDetails;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="player_pitching_details_id")
+    private PlayerPitchingDetails playerPitchingDetails;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="player_fielding_details_id")
+    private PlayerPitchingDetails playerFieldingDetails;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "team_id")
@@ -41,12 +53,15 @@ public class Player {
 
     }
 
-    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String position, Team team) {
+    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String position,
+                  PlayerHittingDetails playerHittingDetails, PlayerPitchingDetails playerPitchingDetails, Team team) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.jerseyNumber = jerseyNumber;
         this.starter = starter;
         this.position = position;
+        this.playerHittingDetails = playerHittingDetails;
+        this.playerPitchingDetails = playerPitchingDetails;
         this.team = team;
     }
 
@@ -98,6 +113,30 @@ public class Player {
         this.position = position;
     }
 
+    public PlayerHittingDetails getPlayerHittingDetails() {
+        return playerHittingDetails;
+    }
+
+    public void setPlayerHittingDetails(PlayerHittingDetails playerHittingDetails) {
+        this.playerHittingDetails = playerHittingDetails;
+    }
+
+    public PlayerPitchingDetails getPlayerPitchingDetails() {
+        return playerPitchingDetails;
+    }
+
+    public void setPlayerPitchingDetails(PlayerPitchingDetails playerPitchingDetails) {
+        this.playerPitchingDetails = playerPitchingDetails;
+    }
+
+    public PlayerPitchingDetails getPlayerFieldingDetails() {
+        return playerFieldingDetails;
+    }
+
+    public void setPlayerFieldingDetails(PlayerPitchingDetails playerFieldingDetails) {
+        this.playerFieldingDetails = playerFieldingDetails;
+    }
+
     public Team getTeam() {
         return team;
     }
@@ -106,16 +145,5 @@ public class Player {
         this.team = team;
     }
 
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", jerseyNumber=" + jerseyNumber +
-                ", starter=" + starter +
-                ", position='" + position + '\'' +
-                ", team=" + team +
-                '}';
-    }
+
 }

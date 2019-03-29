@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.PlayerPitchingDetails;
+import com.junak.scorekeeper.rest.error.player_pitching_details_error.PlayerPitchingDetailsNotFoundException;
 import com.junak.scorekeeper.service.PlayerPitchingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +27,15 @@ public class PlayerPitchingDetailsRestController {
         return playerPitchingDetailsService.findAll();
     }
 
-    @GetMapping("/pitchingDetails/{playerId}")
-    public PlayerPitchingDetails getPlayerPitchingDetails(@PathVariable int playerId){
-        return playerPitchingDetailsService.getPlayerPitchingDetails(playerId);
+    @GetMapping("/pitchingDetails/{pitchingDetailsId}")
+    public PlayerPitchingDetails getPitchingDetails(@PathVariable int pitchingDetailsId) {
+
+        PlayerPitchingDetails thePitchingDetails = playerPitchingDetailsService.findById(pitchingDetailsId);
+
+        if (thePitchingDetails == null) {
+            throw new PlayerPitchingDetailsNotFoundException("Pitching details id not found - " + pitchingDetailsId);
+        }
+
+        return thePitchingDetails;
     }
 }

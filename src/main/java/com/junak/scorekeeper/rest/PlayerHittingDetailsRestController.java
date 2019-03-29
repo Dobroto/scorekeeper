@@ -1,12 +1,10 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.PlayerHittingDetails;
+import com.junak.scorekeeper.rest.error.player_hitting_details_error.PlayerHittingDetailsNotFoundException;
 import com.junak.scorekeeper.service.PlayerHittingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,8 +24,33 @@ public class PlayerHittingDetailsRestController {
         return playerHittingDetailsService.findAll();
     }
 
-    @GetMapping("/hittingDetails/{playerId}")
-    public PlayerHittingDetails getPlayerHittingDetails(@PathVariable int playerId){
-        return playerHittingDetailsService.getPlayerHittingDetails(playerId);
+    @GetMapping("/hittingDetails/{hittingDetailsId}")
+    public PlayerHittingDetails getHittingDetails(@PathVariable int hittingDetailsId) {
+
+        PlayerHittingDetails theHittingDetails = playerHittingDetailsService.findById(hittingDetailsId);
+
+        if (theHittingDetails == null) {
+            throw new PlayerHittingDetailsNotFoundException("Hitting details id not found - " + hittingDetailsId);
+        }
+
+        return theHittingDetails;
+    }
+
+    @DeleteMapping("/hittingDetails/{hittingDetailsId}")
+    public String deleteHittingDetails(@PathVariable int hittingDetailsId) {
+
+        PlayerHittingDetails tempHittingDetails = playerHittingDetailsService.findById(hittingDetailsId);
+
+        // throw exception if null
+
+        if (tempHittingDetails == null) {
+            throw new PlayerHittingDetailsNotFoundException("Hitting details id not found - " + hittingDetailsId);
+        }
+
+        tempHittingDetails.getPlayer().setPlayerHittingDetails(null);
+
+        playerHittingDetailsService.deleteById(hittingDetailsId);
+
+        return "Deleted hitting details id - " + hittingDetailsId;
     }
 }
