@@ -80,9 +80,9 @@ public class PlayerHittingDetails {
     @Column(name = "OPS")
     private double onBaseSlugging;
 
-    @OneToOne(mappedBy = "hittingDetails",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToOne(mappedBy="playerHittingDetails",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
     private Player player;
 
 //    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,

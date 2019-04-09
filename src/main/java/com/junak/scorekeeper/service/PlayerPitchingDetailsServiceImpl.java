@@ -23,33 +23,23 @@ public class PlayerPitchingDetailsServiceImpl implements PlayerPitchingDetailsSe
         return playerPitchingDetailsRepository.findAll();
     }
 
-//    @Override
-//    public PlayerPitchingDetails findById(int id) {
-//        Optional<PlayerPitchingDetails> result = playerPitchingDetailsRepository.findById(id);
-//
-//        PlayerPitchingDetails thePlayerPitchingDetails = null;
-//
-//        if (result.isPresent()) {
-//            thePlayerPitchingDetails = result.get();
-//        } else {
-//            throw new PlayerPitchingDetailsNotFoundException("Player pitching details id not found - " + id);
-//        }
-//
-//        return thePlayerPitchingDetails;
-//    }
-//
-//    @Override
-//    public void save(PlayerPitchingDetails team) {
-//        playerPitchingDetailsRepository.save(team);
-//    }
-//
-//    @Override
-//    public void deleteById(int id) {
-//        playerPitchingDetailsRepository.deleteById(id);
-//    }
+    @Override
+    public PlayerPitchingDetails findById(int id) {
+        Optional<PlayerPitchingDetails> result = playerPitchingDetailsRepository.findById(id);
+
+        PlayerPitchingDetails thePlayerPitchingDetails = null;
+
+        if (result.isPresent()) {
+            thePlayerPitchingDetails = result.get();
+        } else {
+            throw new PlayerPitchingDetailsNotFoundException("Player pitching details id not found - " + id);
+        }
+
+        return thePlayerPitchingDetails;
+    }
 
     @Override
-    public PlayerPitchingDetails getPlayerPitchingDetails(int playerId) {
-        return playerPitchingDetailsRepository.getPlayerPitchingDetails(playerId);
+    public void deleteById(int id) {
+        playerPitchingDetailsRepository.deleteById(id);
     }
 }

@@ -65,9 +65,9 @@ public class PlayerPitchingDetails {
     @Column(name = "WHIP")
     private double whips;
 
-    @OneToOne(mappedBy = "pitchingDetails",
-            cascade = {CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToOne(mappedBy="playerPitchingDetails",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
     private Player player;
 
 //    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,

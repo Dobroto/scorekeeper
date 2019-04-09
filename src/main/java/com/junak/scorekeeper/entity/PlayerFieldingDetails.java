@@ -5,25 +5,23 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
-//@Entity
-//@Table(name = "player_fielding_details")
-//@JsonIdentityInfo(
-//        generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "id")
+@Entity
+@Table(name = "player_fielding_details")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class PlayerFieldingDetails {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id")
-//    private int id;
-//
-//
-//
-//    @OneToOne(mappedBy = "fieldingDetails",
-//            cascade = {CascadeType.DETACH, CascadeType.MERGE,
-//                    CascadeType.PERSIST, CascadeType.REFRESH})
-//    private Player player;
-//
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
+    @OneToOne(mappedBy = "playerFieldingDetails",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private Player player;
+
 //    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
 //            CascadeType.DETACH, CascadeType.REFRESH})
 //    @JoinColumn(name = "home_game_id")
@@ -33,4 +31,24 @@ public class PlayerFieldingDetails {
 //            CascadeType.DETACH, CascadeType.REFRESH})
 //    @JoinColumn(name = "visitor_game_id")
 //    private Game visitorTeamGame;
+
+    public PlayerFieldingDetails() {
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 }

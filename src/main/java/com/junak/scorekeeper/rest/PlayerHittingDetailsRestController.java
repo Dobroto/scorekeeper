@@ -24,38 +24,33 @@ public class PlayerHittingDetailsRestController {
         return playerHittingDetailsService.findAll();
     }
 
-//    @GetMapping("/hittingDetails/{playerId}")
-//    public PlayerHittingDetails getPlayerHittingDetails(@PathVariable int playerId){
-//        return playerHittingDetailsService.getPlayerHittingDetails(playerId);
-//    }
-
     @GetMapping("/hittingDetails/{hittingDetailsId}")
     public PlayerHittingDetails getHittingDetails(@PathVariable int hittingDetailsId) {
 
-        PlayerHittingDetails theDetails = playerHittingDetailsService.findById(hittingDetailsId);
+        PlayerHittingDetails theHittingDetails = playerHittingDetailsService.findById(hittingDetailsId);
 
-        if (theDetails == null) {
+        if (theHittingDetails == null) {
             throw new PlayerHittingDetailsNotFoundException("Hitting details id not found - " + hittingDetailsId);
         }
 
-        return theDetails;
+        return theHittingDetails;
     }
 
     @DeleteMapping("/hittingDetails/{hittingDetailsId}")
     public String deleteHittingDetails(@PathVariable int hittingDetailsId) {
 
-        PlayerHittingDetails tempDetails = playerHittingDetailsService.findById(hittingDetailsId);
+        PlayerHittingDetails tempHittingDetails = playerHittingDetailsService.findById(hittingDetailsId);
 
         // throw exception if null
 
-        if (tempDetails == null) {
-            throw new PlayerHittingDetailsNotFoundException("Details id not found - " + hittingDetailsId);
+        if (tempHittingDetails == null) {
+            throw new PlayerHittingDetailsNotFoundException("Hitting details id not found - " + hittingDetailsId);
         }
 
-        tempDetails.getPlayer().setHittingDetails(null);
+        tempHittingDetails.getPlayer().setPlayerHittingDetails(null);
 
         playerHittingDetailsService.deleteById(hittingDetailsId);
 
-        return "Deleted details id - " + hittingDetailsId;
+        return "Deleted hitting details id - " + hittingDetailsId;
     }
 }

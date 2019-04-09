@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "player")
@@ -33,22 +32,17 @@ public class Player {
     @Column(name = "position")
     private String position;
 
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="player_pitching_details")
-    private PlayerPitchingDetails pitchingDetails;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "player_hitting_details_id")
+    private PlayerHittingDetails playerHittingDetails;
 
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="player_hitting_details")
-    private PlayerHittingDetails hittingDetails;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "player_pitching_details_id")
+    private PlayerPitchingDetails playerPitchingDetails;
 
-//    @OneToOne(cascade=CascadeType.ALL)
-//    @JoinColumn(name="player_fielding_details")
-//    private PlayerFieldingDetails fieldingDetails;
-
-//    @OneToMany(mappedBy = "player",
-//            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//                    CascadeType.DETACH, CascadeType.REFRESH})
-//    private List<PlayerFieldingDetails> homeTeamFieldingDetails;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "player_fielding_details_id")
+    private PlayerFieldingDetails playerFieldingDetails;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -59,12 +53,17 @@ public class Player {
 
     }
 
-    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String position, Team team) {
+    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String position,
+                  PlayerHittingDetails playerHittingDetails, PlayerPitchingDetails playerPitchingDetails,
+                  PlayerFieldingDetails playerFieldingDetails, Team team) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.jerseyNumber = jerseyNumber;
         this.starter = starter;
         this.position = position;
+        this.playerHittingDetails = playerHittingDetails;
+        this.playerPitchingDetails = playerPitchingDetails;
+        this.playerFieldingDetails = playerFieldingDetails;
         this.team = team;
     }
 
@@ -116,56 +115,35 @@ public class Player {
         this.position = position;
     }
 
+    public PlayerHittingDetails getPlayerHittingDetails() {
+        return playerHittingDetails;
+    }
+
+    public void setPlayerHittingDetails(PlayerHittingDetails playerHittingDetails) {
+        this.playerHittingDetails = playerHittingDetails;
+    }
+
+    public PlayerPitchingDetails getPlayerPitchingDetails() {
+        return playerPitchingDetails;
+    }
+
+    public void setPlayerPitchingDetails(PlayerPitchingDetails playerPitchingDetails) {
+        this.playerPitchingDetails = playerPitchingDetails;
+    }
+
+    public PlayerFieldingDetails getPlayerFieldingDetails() {
+        return playerFieldingDetails;
+    }
+
+    public void setPlayerFieldingDetails(PlayerFieldingDetails playerFieldingDetails) {
+        this.playerFieldingDetails = playerFieldingDetails;
+    }
+
     public Team getTeam() {
         return team;
     }
 
     public void setTeam(Team team) {
         this.team = team;
-    }
-
-    public PlayerPitchingDetails getPitchingDetails() {
-        return pitchingDetails;
-    }
-
-    public void setPitchingDetails(PlayerPitchingDetails pitchingDetails) {
-        this.pitchingDetails = pitchingDetails;
-    }
-
-    public PlayerHittingDetails getHittingDetails() {
-        return hittingDetails;
-    }
-
-    public void setHittingDetails(PlayerHittingDetails hittingDetails) {
-        this.hittingDetails = hittingDetails;
-    }
-
-//    public PlayerFieldingDetails getFieldingDetails() {
-//        return fieldingDetails;
-//    }
-//
-//    public void setFieldingDetails(PlayerFieldingDetails fieldingDetails) {
-//        this.fieldingDetails = fieldingDetails;
-//    }
-
-//    public List<PlayerFieldingDetails> getHomeTeamFieldingDetails() {
-//        return homeTeamFieldingDetails;
-//    }
-//
-//    public void setHomeTeamFieldingDetails(List<PlayerFieldingDetails> homeTeamFieldingDetails) {
-//        this.homeTeamFieldingDetails = homeTeamFieldingDetails;
-//    }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", jerseyNumber=" + jerseyNumber +
-                ", starter=" + starter +
-                ", position='" + position + '\'' +
-                ", team=" + team +
-                '}';
     }
 }

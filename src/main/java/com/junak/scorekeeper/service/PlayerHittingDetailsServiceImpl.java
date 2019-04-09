@@ -37,19 +37,10 @@ public class PlayerHittingDetailsServiceImpl implements PlayerHittingDetailsServ
 
         return thePlayerHittingDetails;
     }
-//
-//    @Override
-//    public void save(PlayerHittingDetails details) {
-//        playerHittingDetailsRepository.save(details);
-//    }
-//
+
     @Override
     public void deleteById(int id) {
         playerHittingDetailsRepository.deleteById(id);
     }
 
-//    @Override
-//    public PlayerHittingDetails getPlayerHittingDetails(int playerId) {
-//        return playerHittingDetailsRepository.getPlayerHittingDetails(playerId);
-//    }
 }
