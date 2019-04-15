@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "player_pitching_details")
+@Table(name = "game_pitching_details")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class PlayerPitchingDetails {
+public class GamePitchingDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,28 +59,24 @@ public class PlayerPitchingDetails {
     @Column(name = "SO")
     private int strikeOuts;
 
+    //TODO The formula needs to be set in the database.
     @Column(name = "AVG")
     private double average;
 
     @Column(name = "WHIP")
     private double whips;
 
-    @OneToOne(mappedBy="playerPitchingDetails",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "player_id")
     private Player player;
 
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//            CascadeType.DETACH, CascadeType.REFRESH})
-//    @JoinColumn(name = "home_game_id")
-//    private Game homeTeamGame;
-//
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//            CascadeType.DETACH, CascadeType.REFRESH})
-//    @JoinColumn(name = "visitor_game_id")
-//    private Game visitorTeamGame;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "game_id")
+    private Game game;
 
-    public PlayerPitchingDetails() {
+    public GamePitchingDetails() {
 
     }
 
@@ -214,5 +210,13 @@ public class PlayerPitchingDetails {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

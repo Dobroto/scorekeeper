@@ -30,15 +30,15 @@ public class Team {
                     CascadeType.DETACH, CascadeType.REFRESH})
     private List<Player> players;
 
-//    @OneToMany(mappedBy = "team",
-//            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//                    CascadeType.DETACH, CascadeType.REFRESH})
-//    private List<Game> homeGames;
-//
-//    @OneToMany(mappedBy = "team",
-//            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//                    CascadeType.DETACH, CascadeType.REFRESH})
-//    private List<Game> visitorGames;
+    @OneToMany(mappedBy = "homeTeam",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> homeGames;
+
+    @OneToMany(mappedBy = "visitorTeam",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> visitorGames;
 
     public Team() {
 
@@ -86,5 +86,21 @@ public class Team {
         }
         players.add(player);
         player.setTeam(this);
+    }
+
+    public List<Game> getHomeGames() {
+        return homeGames;
+    }
+
+    public void setHomeGames(List<Game> homeGames) {
+        this.homeGames = homeGames;
+    }
+
+    public List<Game> getVisitorGames() {
+        return visitorGames;
+    }
+
+    public void setVisitorGames(List<Game> visitorGames) {
+        this.visitorGames = visitorGames;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "player")
@@ -48,6 +49,46 @@ public class Player {
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "team_id")
     private Team team;
+
+    @OneToMany(mappedBy = "winPitcher",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> winPitcherGames;
+
+    @OneToMany(mappedBy = "losePitcher",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> losePitcherGames;
+
+    @OneToMany(mappedBy = "savePitcher",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> savePitcherGames;
+
+    @OneToMany(mappedBy = "blownSavePitcher",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> blownSavePitcherGames;
+
+    @OneToMany(mappedBy = "holdPitcher",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Game> holdPitcherGames;
+
+    @OneToMany(mappedBy = "player",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<GameHittingDetails> gameHittingDetails;
+
+    @OneToMany(mappedBy = "player",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<GameFieldingDetails> gameFieldingDetails;
+
+    @OneToMany(mappedBy = "player",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<GamePitchingDetails> gamePitchingDetails;
 
     public Player() {
 
@@ -145,5 +186,69 @@ public class Player {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    public List<Game> getWinPitcherGames() {
+        return winPitcherGames;
+    }
+
+    public void setWinPitcherGames(List<Game> winPitcherGames) {
+        this.winPitcherGames = winPitcherGames;
+    }
+
+    public List<Game> getLosePitcherGames() {
+        return losePitcherGames;
+    }
+
+    public void setLosePitcherGames(List<Game> losePitcherGames) {
+        this.losePitcherGames = losePitcherGames;
+    }
+
+    public List<Game> getSavePitcherGames() {
+        return savePitcherGames;
+    }
+
+    public void setSavePitcherGames(List<Game> savePitcherGames) {
+        this.savePitcherGames = savePitcherGames;
+    }
+
+    public List<Game> getBlownSavePitcherGames() {
+        return blownSavePitcherGames;
+    }
+
+    public void setBlownSavePitcherGames(List<Game> blownSavePitcherGames) {
+        this.blownSavePitcherGames = blownSavePitcherGames;
+    }
+
+    public List<Game> getHoldPitcherGames() {
+        return holdPitcherGames;
+    }
+
+    public void setHoldPitcherGames(List<Game> holdPitcherGames) {
+        this.holdPitcherGames = holdPitcherGames;
+    }
+
+    public List<GameHittingDetails> getGameHittingDetails() {
+        return gameHittingDetails;
+    }
+
+    public void setGameHittingDetails(List<GameHittingDetails> gameHittingDetails) {
+        this.gameHittingDetails = gameHittingDetails;
+    }
+
+    public List<GameFieldingDetails> getGameFieldingDetails() {
+        return gameFieldingDetails;
+    }
+
+    public void setGameFieldingDetails(List<GameFieldingDetails> gameFieldingDetails) {
+        this.gameFieldingDetails = gameFieldingDetails;
+    }
+
+    public List<GamePitchingDetails> getGamePitchingDetails() {
+        return gamePitchingDetails;
+    }
+
+    public void setGamePitchingDetails(List<GamePitchingDetails> gamePitchingDetails) {
+        this.gamePitchingDetails = gamePitchingDetails;
     }
 }

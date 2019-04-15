@@ -6,23 +6,28 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "player_fielding_details")
+@Table(name = "game_fielding_details")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-public class PlayerFieldingDetails {
+public class GameFieldingDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
-    @OneToOne(mappedBy = "playerFieldingDetails",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "player_id")
     private Player player;
 
-    public PlayerFieldingDetails() {
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "game_id")
+    private Game game;
+
+    public GameFieldingDetails() {
 
     }
 
@@ -42,4 +47,11 @@ public class PlayerFieldingDetails {
         this.player = player;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
 }
