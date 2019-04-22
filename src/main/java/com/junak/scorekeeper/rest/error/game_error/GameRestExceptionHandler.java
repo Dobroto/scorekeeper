@@ -1,20 +1,18 @@
-package com.junak.scorekeeper.rest.error.player_hitting_details_error;
+package com.junak.scorekeeper.rest.error.game_error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice
-public class PlayerHittingDetailsRestExceptionHandler {
-    // Add an exception handler for PlayerHittingDetailsNotFoundException
+public class GameRestExceptionHandler {
+    // Add an exception handler for GameNotFoundException
 
     @ExceptionHandler
-    public ResponseEntity<PlayerHittingDetailsErrorResponse> handleException(PlayerHittingDetailsNotFoundException exc) {
+    public ResponseEntity<GameErrorResponse> handleException(GameNotFoundException exc) {
 
-        // create PlayerHittingDetailsErrorResponse
+        // create GameErrorResponse
 
-        PlayerHittingDetailsErrorResponse error = new PlayerHittingDetailsErrorResponse(
+        GameErrorResponse error = new GameErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 exc.getMessage(),
                 System.currentTimeMillis());
@@ -28,9 +26,11 @@ public class PlayerHittingDetailsRestExceptionHandler {
     // Add another exception handler ... to catch any exception (catch all)
 
     @ExceptionHandler
-    public ResponseEntity<PlayerHittingDetailsErrorResponse> handleException(Exception exc) {
+    public ResponseEntity<GameErrorResponse> handleException(Exception exc) {
 
-        PlayerHittingDetailsErrorResponse error = new PlayerHittingDetailsErrorResponse(
+        // create GameErrorResponse
+
+        GameErrorResponse error = new GameErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 exc.getMessage(),
                 System.currentTimeMillis());

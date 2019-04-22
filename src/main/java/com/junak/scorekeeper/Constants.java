@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.entity;
+package com.junak.scorekeeper;
 
 import java.util.Arrays;
 import java.util.HashSet;

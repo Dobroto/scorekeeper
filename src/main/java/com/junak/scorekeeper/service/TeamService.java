@@ -5,11 +5,11 @@ import com.junak.scorekeeper.entity.Team;
 import java.util.List;
 
 public interface TeamService {
-    public List<Team> findAll();
+    List<Team> findAll();
 
-    public Team findById(int id);
+    Team findById(int id);
 
-    public void save(Team team);
+    void save(Team team);
 
-    public void deleteById(int id);
+    void deleteById(int id);
 }

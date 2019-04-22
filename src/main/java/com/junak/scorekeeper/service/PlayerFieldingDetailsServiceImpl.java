@@ -40,6 +40,6 @@ public class PlayerFieldingDetailsServiceImpl implements PlayerFieldingDetailsSe
 
     @Override
     public void deleteById(int id) {
-
+        playerFieldingDetailsRepository.deleteById(id);
     }
 }

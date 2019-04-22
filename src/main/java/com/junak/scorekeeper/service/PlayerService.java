@@ -5,13 +5,13 @@ import com.junak.scorekeeper.entity.Player;
 import java.util.List;
 
 public interface PlayerService {
-    public List<Player> findAll();
+    List<Player> findAll();
 
-    public List<Player> findAllTeamPlayers(int teamId);
+    List<Player> findAllTeamPlayers(int teamId);
 
-    public Player findById(int id);
+    Player findById(int id);
 
-    public void save(Player player);
+    void save(Player player);
 
-    public void deleteById(int id);
+    void deleteById(int id);
 }

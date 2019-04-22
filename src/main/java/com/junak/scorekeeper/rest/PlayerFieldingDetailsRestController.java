@@ -18,12 +18,12 @@ public class PlayerFieldingDetailsRestController {
         this.playerFieldingDetailsService = playerFieldingDetailsService;
     }
 
-    @GetMapping("/fieldingDetails")
+    @GetMapping("/playerFieldingDetails")
     public List<PlayerFieldingDetails> findAll(){
         return playerFieldingDetailsService.findAll();
     }
 
-    @GetMapping("/fieldingDetails/{fieldingDetailsId}")
+    @GetMapping("/playerFieldingDetails/{fieldingDetailsId}")
     public PlayerFieldingDetails getFieldingDetails(@PathVariable int fieldingDetailsId) {
 
         PlayerFieldingDetails theFieldingDetails = playerFieldingDetailsService.findById(fieldingDetailsId);
@@ -35,7 +35,7 @@ public class PlayerFieldingDetailsRestController {
         return theFieldingDetails;
     }
 
-    @DeleteMapping("/fieldingDetails/{fieldingDetailsId}")
+    @DeleteMapping("/playerFieldingDetails/{fieldingDetailsId}")
     public String deleteFieldingDetails(@PathVariable int fieldingDetailsId) {
 
         PlayerFieldingDetails tempFieldingDetails = playerFieldingDetailsService.findById(fieldingDetailsId);

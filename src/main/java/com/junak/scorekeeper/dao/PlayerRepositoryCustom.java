@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.dao;
 
 import com.junak.scorekeeper.entity.Player;
+
 import java.util.List;
 
 public interface PlayerRepositoryCustom {

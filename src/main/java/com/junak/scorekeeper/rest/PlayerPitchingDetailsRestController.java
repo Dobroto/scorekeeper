@@ -4,10 +4,7 @@ import com.junak.scorekeeper.entity.PlayerPitchingDetails;
 import com.junak.scorekeeper.rest.error.player_pitching_details_error.PlayerPitchingDetailsNotFoundException;
 import com.junak.scorekeeper.service.PlayerPitchingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,12 +19,12 @@ public class PlayerPitchingDetailsRestController {
         this.playerPitchingDetailsService = playerPitchingDetailsService;
     }
 
-    @GetMapping("/pitchingDetails")
+    @GetMapping("/playerPitchingDetails")
     public List<PlayerPitchingDetails> findAll() {
         return playerPitchingDetailsService.findAll();
     }
 
-    @GetMapping("/pitchingDetails/{pitchingDetailsId}")
+    @GetMapping("/playerPitchingDetails/{pitchingDetailsId}")
     public PlayerPitchingDetails getPitchingDetails(@PathVariable int pitchingDetailsId) {
 
         PlayerPitchingDetails thePitchingDetails = playerPitchingDetailsService.findById(pitchingDetailsId);
@@ -37,5 +34,23 @@ public class PlayerPitchingDetailsRestController {
         }
 
         return thePitchingDetails;
+    }
+
+    @DeleteMapping("/playerPitchingDetails/{pitchingDetailsId}")
+    public String deletePitchingDetails(@PathVariable int pitchingDetailsId) {
+
+        PlayerPitchingDetails tempPitchingDetails = playerPitchingDetailsService.findById(pitchingDetailsId);
+
+        // throw exception if null
+
+        if (tempPitchingDetails == null) {
+            throw new PlayerPitchingDetailsNotFoundException("Pitching details id not found - " + pitchingDetailsId);
+        }
+
+        tempPitchingDetails.getPlayer().setPlayerPitchingDetails(null);
+
+        playerPitchingDetailsService.deleteById(pitchingDetailsId);
+
+        return "Deleted pitching details id - " + pitchingDetailsId;
     }
 }

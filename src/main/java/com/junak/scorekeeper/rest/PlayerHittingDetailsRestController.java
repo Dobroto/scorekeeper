@@ -19,12 +19,12 @@ public class PlayerHittingDetailsRestController {
         this.playerHittingDetailsService = playerHittingDetailsService;
     }
 
-    @GetMapping("/hittingDetails")
+    @GetMapping("/playerHittingDetails")
     public List<PlayerHittingDetails> findAll(){
         return playerHittingDetailsService.findAll();
     }
 
-    @GetMapping("/hittingDetails/{hittingDetailsId}")
+    @GetMapping("/playerHittingDetails/{hittingDetailsId}")
     public PlayerHittingDetails getHittingDetails(@PathVariable int hittingDetailsId) {
 
         PlayerHittingDetails theHittingDetails = playerHittingDetailsService.findById(hittingDetailsId);
@@ -36,7 +36,7 @@ public class PlayerHittingDetailsRestController {
         return theHittingDetails;
     }
 
-    @DeleteMapping("/hittingDetails/{hittingDetailsId}")
+    @DeleteMapping("/playerHittingDetails/{hittingDetailsId}")
     public String deleteHittingDetails(@PathVariable int hittingDetailsId) {
 
         PlayerHittingDetails tempHittingDetails = playerHittingDetailsService.findById(hittingDetailsId);

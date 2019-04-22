@@ -15,22 +15,22 @@ public class TeamRestController {
 
     @Autowired
     public TeamRestController (TeamService teamService){
-        this.teamService = teamService;
-    }
+                this.teamService = teamService;
+            }
 
-    @GetMapping("/teams")
-    public List<Team> findAll() {
-        return teamService.findAll();
-    }
+            @GetMapping("/teams")
+            public List<Team> findAll() {
+                return teamService.findAll();
+            }
 
-    @GetMapping("/teams/{teamId}")
-    public Team getTeam(@PathVariable int teamId) {
+            @GetMapping("/teams/{teamId}")
+            public Team getTeam(@PathVariable int teamId) {
 
-        Team theTeam = teamService.findById(teamId);
+                Team theTeam = teamService.findById(teamId);
 
-        if (theTeam == null) {
-            throw new TeamNotFoundException("Team id not found - " + teamId);
-        }
+                if (theTeam == null) {
+                    throw new TeamNotFoundException("Team id not found - " + teamId);
+                }
 
         return theTeam;
     }
