@@ -30,8 +30,18 @@ public class Player {
     @Column(name = "starter")
     private boolean starter;
 
-    @Column(name = "position")
-    private String position;
+    @Column(name = "defence_position")
+    private String defencePosition;
+
+    @Column(name = "offense_position")
+    private String offencePosition;
+
+    @Column(name = "batting_order")
+    private String battingOrder;
+
+    //number of balls thrown by a pitcher outside of the strike zone
+    @Column(name = "ball_number")
+    private int ballNumber;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "player_hitting_details_id")
@@ -94,14 +104,14 @@ public class Player {
 
     }
 
-    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String position,
+    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String defencePosition,
                   PlayerHittingDetails playerHittingDetails, PlayerPitchingDetails playerPitchingDetails,
                   PlayerFieldingDetails playerFieldingDetails, Team team) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.jerseyNumber = jerseyNumber;
         this.starter = starter;
-        this.position = position;
+        this.defencePosition = defencePosition;
         this.playerHittingDetails = playerHittingDetails;
         this.playerPitchingDetails = playerPitchingDetails;
         this.playerFieldingDetails = playerFieldingDetails;
@@ -148,12 +158,36 @@ public class Player {
         this.starter = starter;
     }
 
-    public String getPosition() {
-        return position;
+    public String getDefencePosition() {
+        return defencePosition;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setDefencePosition(String defencePosition) {
+        this.defencePosition = defencePosition;
+    }
+
+    public String getBattingOrder() {
+        return battingOrder;
+    }
+
+    public void setBattingOrder(String battingOrder) {
+        this.battingOrder = battingOrder;
+    }
+
+    public int getBallNumber() {
+        return ballNumber;
+    }
+
+    public void setBallNumber(int ballNumber) {
+        this.ballNumber = ballNumber;
+    }
+
+    public String getOffencePosition() {
+        return offencePosition;
+    }
+
+    public void setOffencePosition(String offencePosition) {
+        this.offencePosition = offencePosition;
     }
 
     public PlayerHittingDetails getPlayerHittingDetails() {

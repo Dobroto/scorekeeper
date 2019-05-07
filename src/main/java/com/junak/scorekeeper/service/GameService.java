@@ -12,4 +12,6 @@ public interface GameService {
     void save(Game team);
 
     void deleteById(int id);
+
+//    void startGame(int gameId);
 }

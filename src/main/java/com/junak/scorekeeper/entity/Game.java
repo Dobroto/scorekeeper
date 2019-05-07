@@ -19,9 +19,13 @@ public class Game {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "date")
-    @Temporal(TemporalType.DATE)
-    private Date dateOfGame;
+    @Column(name = "start_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTimeOfGame;
+
+    @Column(name = "end_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTimeOfGame;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -73,6 +77,9 @@ public class Game {
     @JoinColumn(name = "hold_pitcher_player_id")
     private Player holdPitcher;
 
+    @Column(name = "last_command")
+    public String lastCommand;
+
     public Game(){
 
     }
@@ -85,12 +92,20 @@ public class Game {
         this.id = id;
     }
 
-    public Date getDateOfGame() {
-        return dateOfGame;
+    public Date getStartTimeOfGame() {
+        return startTimeOfGame;
     }
 
-    public void setDateOfGame(Date dateOfGame) {
-        this.dateOfGame = dateOfGame;
+    public void setStartTimeOfGame(Date startTimeOfGame) {
+        this.startTimeOfGame = startTimeOfGame;
+    }
+
+    public Date getEndTimeOfGame() {
+        return endTimeOfGame;
+    }
+
+    public void setEndTimeOfGame(Date endTimeOfGame) {
+        this.endTimeOfGame = endTimeOfGame;
     }
 
     public Team getHomeTeam() {
@@ -171,5 +186,13 @@ public class Game {
 
     public void setGameFieldingDetails(List<GameFieldingDetails> gameFieldingDetails) {
         this.gameFieldingDetails = gameFieldingDetails;
+    }
+
+    public String getLastCommand() {
+        return lastCommand;
+    }
+
+    public void setLastCommand(String lastCommand) {
+        this.lastCommand = lastCommand;
     }
 }

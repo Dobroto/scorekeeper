@@ -48,4 +48,9 @@ public class GameServiceImpl implements GameService {
         gameRepository.deleteById(id);
     }
 
+//    @Override
+//    public void startGame(int gameId) {
+//        gameRepository.setStartTime(gameId);
+//    }
+
 }
