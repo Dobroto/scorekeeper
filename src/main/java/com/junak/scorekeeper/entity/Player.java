@@ -37,11 +37,11 @@ public class Player {
     private String offencePosition;
 
     @Column(name = "batting_order")
-    private String battingOrder;
+    private int battingOrder;
 
     //number of balls thrown by a pitcher outside of the strike zone
-    @Column(name = "ball_number")
-    private int ballNumber;
+    @Column(name = "ball_count")
+    private int ballCount;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "player_hitting_details_id")
@@ -166,20 +166,20 @@ public class Player {
         this.defencePosition = defencePosition;
     }
 
-    public String getBattingOrder() {
+    public int getBattingOrder() {
         return battingOrder;
     }
 
-    public void setBattingOrder(String battingOrder) {
+    public void setBattingOrder(int battingOrder) {
         this.battingOrder = battingOrder;
     }
 
-    public int getBallNumber() {
-        return ballNumber;
+    public int getBallCount() {
+        return ballCount;
     }
 
-    public void setBallNumber(int ballNumber) {
-        this.ballNumber = ballNumber;
+    public void setBallCount(int ballCount) {
+        this.ballCount = ballCount;
     }
 
     public String getOffencePosition() {

@@ -39,6 +39,11 @@ public class GameFieldingDetailsServiceImpl implements GameFieldingDetailsServic
     }
 
     @Override
+    public void save(GameFieldingDetails gameFieldingDetails) {
+        gameFieldingDetailsRepository.save(gameFieldingDetails);
+    }
+
+    @Override
     public void deleteById(int id) {
         gameFieldingDetailsRepository.deleteById(id);
     }

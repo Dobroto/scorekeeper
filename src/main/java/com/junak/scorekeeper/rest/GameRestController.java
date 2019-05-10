@@ -1,13 +1,9 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.Constants;
-import com.junak.scorekeeper.entity.Game;
-import com.junak.scorekeeper.entity.Player;
-import com.junak.scorekeeper.entity.Team;
+import com.junak.scorekeeper.entity.*;
 import com.junak.scorekeeper.rest.error.game_error.GameNotFoundException;
-import com.junak.scorekeeper.service.GameService;
-import com.junak.scorekeeper.service.ActionReverser;
-import com.junak.scorekeeper.service.PlayerService;
+import com.junak.scorekeeper.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +15,31 @@ import java.util.List;
 public class GameRestController {
     private GameService gameService;
     private PlayerService playerService;
+    private TeamService teamService;
+    private GameFieldingDetailsService gameFieldingDetailsService;
+    private GameHittingDetailsService gameHittingDetailsService;
+    private GamePitchingDetailsService gamePitchingDetailsService;
+    private PlayerFieldingDetailsService playerFieldingDetailsService;
+    private PlayerHittingDetailsService playerHittingDetailsService;
+    private PlayerPitchingDetailsService playerPitchingDetailsService;
 
     @Autowired
-    public GameRestController(GameService gameService, PlayerService playerService) {
+    public GameRestController(GameService gameService, PlayerService playerService, TeamService teamService,
+                              GameFieldingDetailsService gameFieldingDetailsService,
+                              GameHittingDetailsService gameHittingDetailsService,
+                              GamePitchingDetailsService gamePitchingDetailsService,
+                              PlayerFieldingDetailsService playerFieldingDetailsService,
+                              PlayerHittingDetailsService playerHittingDetailsService,
+                              PlayerPitchingDetailsService playerPitchingDetailsService) {
         this.gameService = gameService;
         this.playerService = playerService;
+        this.teamService = teamService;
+        this.gameFieldingDetailsService = gameFieldingDetailsService;
+        this.gameHittingDetailsService = gameHittingDetailsService;
+        this.gamePitchingDetailsService = gamePitchingDetailsService;
+        this.playerFieldingDetailsService = playerFieldingDetailsService;
+        this.playerHittingDetailsService = playerHittingDetailsService;
+        this.playerPitchingDetailsService = playerPitchingDetailsService;
     }
 
     @GetMapping("/games")
@@ -80,12 +96,72 @@ public class GameRestController {
         return "Deleted game id - " + gameId;
     }
 
+    @PostMapping("/games/{homeTeamId}/{visitorTeamId}/createNewGame")
+    public void createNewGame(@PathVariable int homeTeamId, @PathVariable int visitorTeamId) {
+        Team homeTeam = teamService.findById(homeTeamId);
+        Team visitorTeam = teamService.findById(visitorTeamId);
+
+        Game theGame = new Game();
+        theGame.setHomeTeam(homeTeam);
+        theGame.setVisitorTeam(visitorTeam);
+        gameService.save(theGame);
+
+        //TODO every player should have player details
+        initializePlayerDetails(homeTeam);
+        initializePlayerDetails(visitorTeam);
+    }
+
+    private void initializePlayerDetails(Team team) {
+        List<Player> players = team.getPlayers();
+//        Player currPlayer;
+        for (Player player : players) {
+//            currPlayer = playerService.findById(player.getId());
+
+            if (player.getPlayerHittingDetails() == null){
+                PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
+                hittingDetails.setPlayer(player);
+                playerHittingDetailsService.save(hittingDetails);
+            }
+        }
+    }
+
     @PutMapping("/games/{gameId}/play")
     public void startGame(@PathVariable int gameId) {
         Game theGame = gameService.findById(gameId);
         Date currentDate = new Date();
         theGame.setStartTimeOfGame(currentDate);
+        initiateGameDetails(gameId);
         gameService.save(theGame);
+    }
+
+    private void initiateGameDetails(int gameId) {
+        //find batter
+        Game theGame = gameService.findById(gameId);
+        Team homeTeam = theGame.getHomeTeam();
+        Team visitorTeam = theGame.getVisitorTeam();
+        Player batter = getCurrentBatter(visitorTeam);
+        //create game hitting details for batter
+        GameHittingDetails batterGameHittingDetails = new GameHittingDetails();
+        batterGameHittingDetails.setPlayer(batter);
+        batterGameHittingDetails.setGame(theGame);
+        //increasing game (G) statistics to batter
+        batterGameHittingDetails.setGames(batterGameHittingDetails.getGames() + 1);
+        batter.getPlayerHittingDetails();
+
+        gameHittingDetailsService.save(batterGameHittingDetails);
+    }
+
+    private Player getCurrentBatter(Team offensiveTeam) {
+        List<Player> players = offensiveTeam.getPlayers();
+        int lowestBattingOrder = 10;
+        Player batter = new Player();
+        for (Player player : players) {
+            if ((player.getBattingOrder() < lowestBattingOrder) && (player.getBattingOrder() != 0)) {
+                batter = player;
+                lowestBattingOrder = player.getBattingOrder();
+            }
+        }
+        return batter;
     }
 
     @PutMapping("/games/{gameId}/endGame")
@@ -110,13 +186,13 @@ public class GameRestController {
         Game theGame = gameService.findById(gameId);
         theGame.setLastCommand("ball");
         Player batter = playerService.findById(batterId);
-        int currentNumberOfBalls = batter.getBallNumber();
+        int currentNumberOfBalls = batter.getBallCount();
         currentNumberOfBalls++;
         if (currentNumberOfBalls > 3) {
             walk(gameId, pitcherId, batterId);
             return;
         }
-        batter.setBallNumber(currentNumberOfBalls);
+        batter.setBallCount(currentNumberOfBalls);
         playerService.save(batter);
         //TODO livescore
     }
@@ -130,13 +206,18 @@ public class GameRestController {
         pushRunnersWithOneBase(batter);
     }
 
+    //not finished
     private void pushRunnersWithOneBase(Player batter) {
         Player firstBaseRunner = getFirstBaseRunner(batter);
         Player secondBaseRunner = getSecondBaseRunner(batter);
         Player thirdBaseRunner = getThirdBaseRunner(batter);
 
         batter.setOffencePosition(Constants.runnerFirstBase);
-        playerService.save(batter);
+        //increase number of walks by batter
+        PlayerHittingDetails batterHittingDetails = batter.getPlayerHittingDetails();
+        batterHittingDetails.setBaseForBalls(batterHittingDetails.getBaseForBalls() + 1);
+
+
         if (firstBaseRunner != null) {
             firstBaseRunner.setOffencePosition(Constants.runnerSecondBase);
             playerService.save(firstBaseRunner);
@@ -145,9 +226,16 @@ public class GameRestController {
                 playerService.save(secondBaseRunner);
                 if (thirdBaseRunner != null) {
                     thirdBaseRunner.setOffencePosition(Constants.runnerHomeBase);
+                    //increase runs by third base runner
+                    PlayerHittingDetails thirdBaseRunnerHittingDetails = thirdBaseRunner.getPlayerHittingDetails();
+                    thirdBaseRunnerHittingDetails.setRuns(thirdBaseRunnerHittingDetails.getRuns() + 1);
+                    //increase RBI by batter
+                    batterHittingDetails.setRunBattedIn(batterHittingDetails.getRunBattedIn() + 1);
+                    playerService.save(thirdBaseRunner);
                 }
             }
         }
+        playerService.save(batter);
     }
 
     private Player getFirstBaseRunner(Player batter) {

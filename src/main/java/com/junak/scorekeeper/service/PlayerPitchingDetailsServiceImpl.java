@@ -39,6 +39,11 @@ public class PlayerPitchingDetailsServiceImpl implements PlayerPitchingDetailsSe
     }
 
     @Override
+    public void save(PlayerPitchingDetails playerPitchingDetails) {
+        playerPitchingDetailsRepository.save(playerPitchingDetails);
+    }
+
+    @Override
     public void deleteById(int id) {
         playerPitchingDetailsRepository.deleteById(id);
     }

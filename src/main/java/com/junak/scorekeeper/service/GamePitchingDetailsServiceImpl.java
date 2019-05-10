@@ -39,6 +39,11 @@ public class GamePitchingDetailsServiceImpl implements GamePitchingDetailsServic
     }
 
     @Override
+    public void save(GamePitchingDetails gamePitchingDetails) {
+        gamePitchingDetailsRepository.save(gamePitchingDetails);
+    }
+
+    @Override
     public void deleteById(int id) {
         gamePitchingDetailsRepository.deleteById(id);
     }

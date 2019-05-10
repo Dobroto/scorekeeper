@@ -39,6 +39,11 @@ public class GameHittingDetailsServiceImpl implements GameHittingDetailsService 
     }
 
     @Override
+    public void save(GameHittingDetails gameHittingDetails) {
+        gameHittingDetailsRepository.save(gameHittingDetails);
+    }
+
+    @Override
     public void deleteById(int id) {
         gameHittingDetailsRepository.deleteById(id);
     }

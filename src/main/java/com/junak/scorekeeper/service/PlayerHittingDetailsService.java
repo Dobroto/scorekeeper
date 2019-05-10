@@ -9,5 +9,7 @@ public interface PlayerHittingDetailsService {
 
     PlayerHittingDetails findById(int id);
 
+    void save(PlayerHittingDetails playerHittingDetails);
+
     void deleteById(int id);
 }

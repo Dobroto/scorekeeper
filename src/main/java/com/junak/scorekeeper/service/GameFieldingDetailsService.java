@@ -9,5 +9,7 @@ public interface GameFieldingDetailsService {
 
     GameFieldingDetails findById(int id);
 
+    void save(GameFieldingDetails gameFieldingDetails);
+
     void deleteById(int id);
 }

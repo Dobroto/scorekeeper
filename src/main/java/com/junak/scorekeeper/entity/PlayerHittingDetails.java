@@ -2,6 +2,8 @@ package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
@@ -32,6 +34,7 @@ public class PlayerHittingDetails {
     @Column(name = "HBP")
     private int hitByPitches;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "AB")
     private int atBat;
 
@@ -65,37 +68,32 @@ public class PlayerHittingDetails {
     @Column(name = "SF")
     private int sacrificeFlies;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "TB")
     private int totalBases;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "AVG")
     private double battingAverage;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "OBP")
     private double onBasePercantage;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "SLG")
     private double sluggingPercentage;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "OPS")
     private double onBaseSlugging;
 
-    @OneToOne(mappedBy="playerHittingDetails",
+    @OneToOne(mappedBy = "playerHittingDetails",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
+                    CascadeType.DETACH, CascadeType.REFRESH})
     private Player player;
 
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//            CascadeType.DETACH, CascadeType.REFRESH})
-//    @JoinColumn(name = "home_game_id")
-//    private Game homeTeamGame;
-//
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//            CascadeType.DETACH, CascadeType.REFRESH})
-//    @JoinColumn(name = "visitor_game_id")
-//    private Game visitorTeamGame;
-
-    public PlayerHittingDetails(){
+    public PlayerHittingDetails() {
 
     }
 

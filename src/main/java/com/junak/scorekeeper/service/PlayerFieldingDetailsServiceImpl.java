@@ -39,6 +39,11 @@ public class PlayerFieldingDetailsServiceImpl implements PlayerFieldingDetailsSe
     }
 
     @Override
+    public void save(PlayerFieldingDetails playerFieldingDetails) {
+        playerFieldingDetailsRepository.save(playerFieldingDetails);
+    }
+
+    @Override
     public void deleteById(int id) {
         playerFieldingDetailsRepository.deleteById(id);
     }
