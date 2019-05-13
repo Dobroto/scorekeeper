@@ -2,6 +2,8 @@ package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
@@ -29,8 +31,9 @@ public class PlayerPitchingDetails {
     @Column(name = "IP")
     private double inningsPitched;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "ERA")
-    private double earnedRunAverage;
+    private Double earnedRunAverage;
 
     @Column(name = "G")
     private int games;
@@ -59,26 +62,18 @@ public class PlayerPitchingDetails {
     @Column(name = "SO")
     private int strikeOuts;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "AVG")
-    private double average;
+    private Double average;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "WHIP")
-    private double whips;
+    private Double whips;
 
     @OneToOne(mappedBy="playerPitchingDetails",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
     private Player player;
-
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//            CascadeType.DETACH, CascadeType.REFRESH})
-//    @JoinColumn(name = "home_game_id")
-//    private Game homeTeamGame;
-//
-//    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-//            CascadeType.DETACH, CascadeType.REFRESH})
-//    @JoinColumn(name = "visitor_game_id")
-//    private Game visitorTeamGame;
 
     public PlayerPitchingDetails() {
 
@@ -124,7 +119,7 @@ public class PlayerPitchingDetails {
         this.inningsPitched = inningsPitched;
     }
 
-    public double getEarnedRunAverage() {
+    public Double getEarnedRunAverage() {
         return earnedRunAverage;
     }
 
@@ -200,11 +195,11 @@ public class PlayerPitchingDetails {
         this.strikeOuts = strikeOuts;
     }
 
-    public double getAverage() {
+    public Double getAverage() {
         return average;
     }
 
-    public double getWhips() {
+    public Double getWhips() {
         return whips;
     }
 

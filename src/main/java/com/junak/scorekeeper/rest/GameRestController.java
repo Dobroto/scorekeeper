@@ -106,22 +106,46 @@ public class GameRestController {
         theGame.setVisitorTeam(visitorTeam);
         gameService.save(theGame);
 
-        //TODO every player should have player details
         initializePlayerDetails(homeTeam);
         initializePlayerDetails(visitorTeam);
     }
 
     private void initializePlayerDetails(Team team) {
         List<Player> players = team.getPlayers();
-//        Player currPlayer;
         for (Player player : players) {
-//            currPlayer = playerService.findById(player.getId());
+            initializePlayerHittingDetails(player);
+            initializePlayerPitchingDetails(player);
+            initializePlayerFieldingDetails(player);
+        }
+    }
 
-            if (player.getPlayerHittingDetails() == null){
-                PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
-                hittingDetails.setPlayer(player);
-                playerHittingDetailsService.save(hittingDetails);
-            }
+    private void initializePlayerHittingDetails(Player player) {
+        if (player.getPlayerHittingDetails() == null) {
+            PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
+            hittingDetails.setPlayer(player);
+            playerHittingDetailsService.save(hittingDetails);
+            player.setPlayerHittingDetails(hittingDetails);
+            playerService.save(player);
+        }
+    }
+
+    private void initializePlayerPitchingDetails(Player player) {
+        if (player.getPlayerPitchingDetails() == null) {
+            PlayerPitchingDetails pitchingDetails = new PlayerPitchingDetails();
+            pitchingDetails.setPlayer(player);
+            playerPitchingDetailsService.save(pitchingDetails);
+            player.setPlayerPitchingDetails(pitchingDetails);
+            playerService.save(player);
+        }
+    }
+
+    private void initializePlayerFieldingDetails(Player player) {
+        if (player.getPlayerFieldingDetails() == null) {
+            PlayerFieldingDetails fieldingDetails = new PlayerFieldingDetails();
+            fieldingDetails.setPlayer(player);
+            playerFieldingDetailsService.save(fieldingDetails);
+            player.setPlayerFieldingDetails(fieldingDetails);
+            playerService.save(player);
         }
     }
 
@@ -130,25 +154,46 @@ public class GameRestController {
         Game theGame = gameService.findById(gameId);
         Date currentDate = new Date();
         theGame.setStartTimeOfGame(currentDate);
-        initiateGameDetails(gameId);
+        Team homeTeam = theGame.getHomeTeam();
+        Team visitorTeam = theGame.getVisitorTeam();
+
+        //TODO initialize all game details to the starting players
+
+        initializeGameDetails(homeTeam, theGame);
         gameService.save(theGame);
     }
 
-    private void initiateGameDetails(int gameId) {
-        //find batter
-        Game theGame = gameService.findById(gameId);
-        Team homeTeam = theGame.getHomeTeam();
-        Team visitorTeam = theGame.getVisitorTeam();
-        Player batter = getCurrentBatter(visitorTeam);
-        //create game hitting details for batter
-        GameHittingDetails batterGameHittingDetails = new GameHittingDetails();
-        batterGameHittingDetails.setPlayer(batter);
-        batterGameHittingDetails.setGame(theGame);
-        //increasing game (G) statistics to batter
-        batterGameHittingDetails.setGames(batterGameHittingDetails.getGames() + 1);
-        batter.getPlayerHittingDetails();
+    private void initializeGameDetails(Team team, Game theGame) {
+        List<Player> players = team.getPlayers();
+        for (Player player : players) {
+            initializeGameHittingDetails(player, theGame);
+//            initializeGamePitchingDetails(player, theGame);
+//            initializeGameFieldingDetails(player, theGame);
+        }
 
-        gameHittingDetailsService.save(batterGameHittingDetails);
+//
+//        //find batter
+//        Game theGame = gameService.findById(gameId);
+//        Team homeTeam = theGame.getHomeTeam();
+//        Team visitorTeam = theGame.getVisitorTeam();
+//        Player batter = getCurrentBatter(visitorTeam);
+//        //create game hitting details for batter
+//        GameHittingDetails batterGameHittingDetails = new GameHittingDetails();
+//        batterGameHittingDetails.setPlayer(batter);
+//        batterGameHittingDetails.setGame(theGame);
+//        //increasing game (G) statistics to batter
+//        batterGameHittingDetails.setGames(batterGameHittingDetails.getGames() + 1);
+//        batter.getPlayerHittingDetails();
+//
+//        gameHittingDetailsService.save(batterGameHittingDetails);
+    }
+
+    private void initializeGameHittingDetails(Player player, Game theGame) {
+        if (player.isStarter()) {
+            GameHittingDetails gameHittingDetails = new GameHittingDetails();
+            gameHittingDetails.setPlayer(player);
+            gameHittingDetails.setGame(theGame);
+        }
     }
 
     private Player getCurrentBatter(Team offensiveTeam) {

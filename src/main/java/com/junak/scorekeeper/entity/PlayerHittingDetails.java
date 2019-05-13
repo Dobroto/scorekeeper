@@ -48,7 +48,7 @@ public class PlayerHittingDetails {
     private int doubleHit;
 
     @Column(name = "3B")
-    private int trippleHit;
+    private int tripleHit;
 
     @Column(name = "HR")
     private int homeRun;
@@ -74,19 +74,19 @@ public class PlayerHittingDetails {
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "AVG")
-    private double battingAverage;
+    private Double battingAverage;
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "OBP")
-    private double onBasePercantage;
+    private Double onBasePercantage;
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "SLG")
-    private double sluggingPercentage;
+    private Double sluggingPercentage;
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "OPS")
-    private double onBaseSlugging;
+    private Double onBaseSlugging;
 
     @OneToOne(mappedBy = "playerHittingDetails",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
@@ -173,12 +173,12 @@ public class PlayerHittingDetails {
         this.doubleHit = doubleHit;
     }
 
-    public int getTrippleHit() {
-        return trippleHit;
+    public int getTripleHit() {
+        return tripleHit;
     }
 
-    public void setTrippleHit(int trippleHit) {
-        this.trippleHit = trippleHit;
+    public void setTripleHit(int tripleHit) {
+        this.tripleHit = tripleHit;
     }
 
     public int getHomeRun() {
@@ -233,19 +233,19 @@ public class PlayerHittingDetails {
         return totalBases;
     }
 
-    public double getBattingAverage() {
+    public Double getBattingAverage() {
         return battingAverage;
     }
 
-    public double getOnBasePercantage() {
+    public Double getOnBasePercantage() {
         return onBasePercantage;
     }
 
-    public double getSluggingPercentage() {
+    public Double getSluggingPercentage() {
         return sluggingPercentage;
     }
 
-    public double getOnBaseSlugging() {
+    public Double getOnBaseSlugging() {
         return onBaseSlugging;
     }
 
