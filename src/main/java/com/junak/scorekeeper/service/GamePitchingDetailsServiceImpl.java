@@ -1,8 +1,10 @@
 package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.GamePitchingDetailsRepository;
+import com.junak.scorekeeper.entity.Game;
 import com.junak.scorekeeper.entity.GamePitchingDetails;
-import com.junak.scorekeeper.rest.error.game_pitching_details_error.GamePitchingDetailsNotFoundException;
+import com.junak.scorekeeper.entity.Player;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +34,7 @@ public class GamePitchingDetailsServiceImpl implements GamePitchingDetailsServic
         if (result.isPresent()) {
             theGamePitchingDetails = result.get();
         } else {
-            throw new GamePitchingDetailsNotFoundException("Game pitching details id not found - " + id);
+            throw new GameNotFoundException("Game pitching details id not found - " + id);
         }
 
         return theGamePitchingDetails;
@@ -46,5 +48,17 @@ public class GamePitchingDetailsServiceImpl implements GamePitchingDetailsServic
     @Override
     public void deleteById(int id) {
         gamePitchingDetailsRepository.deleteById(id);
+    }
+
+    @Override
+    public GamePitchingDetails getGamePitchingDetails(Player pitcher, Game game) {
+        GamePitchingDetails theGamePitchingDetails = gamePitchingDetailsRepository.getGamePitchingDetails(pitcher, game);
+
+        if (theGamePitchingDetails == null) {
+            throw new GameNotFoundException("Game pitching details not found of player with id " + pitcher.getId()
+            + "game id " + game.getId());
+        }
+
+        return theGamePitchingDetails;
     }
 }

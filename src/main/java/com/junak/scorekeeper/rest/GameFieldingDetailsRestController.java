@@ -1,7 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.GameFieldingDetails;
-import com.junak.scorekeeper.rest.error.game_fielding_details_error.GameFieldingDetailsNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.GameFieldingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class GameFieldingDetailsRestController {
         GameFieldingDetails theFieldingDetails = gameFieldingDetailsService.findById(fieldingDetailsId);
 
         if (theFieldingDetails == null) {
-            throw new GameFieldingDetailsNotFoundException("Fielding details id not found - " + fieldingDetailsId);
+            throw new GameNotFoundException("Fielding details id not found - " + fieldingDetailsId);
         }
 
         return theFieldingDetails;
@@ -43,7 +43,7 @@ public class GameFieldingDetailsRestController {
         // throw exception if null
 
         if (tempFieldingDetails == null) {
-            throw new GameFieldingDetailsNotFoundException("Fielding details id not found - " + fieldingDetailsId);
+            throw new GameNotFoundException("Fielding details id not found - " + fieldingDetailsId);
         }
 
         tempFieldingDetails.getGame().setGameFieldingDetails(null);

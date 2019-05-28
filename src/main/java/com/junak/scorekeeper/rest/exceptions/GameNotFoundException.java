@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.rest.error.game_error;
+package com.junak.scorekeeper.rest.exceptions;
 
 public class GameNotFoundException extends RuntimeException{
     public GameNotFoundException() {

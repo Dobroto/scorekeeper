@@ -2,7 +2,7 @@ package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.Constants;
 import com.junak.scorekeeper.entity.*;
-import com.junak.scorekeeper.rest.error.game_error.GameNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -112,41 +112,49 @@ public class GameRestController {
 
     private void initializePlayerDetails(Team team) {
         List<Player> players = team.getPlayers();
-        for (Player player : players) {
-            initializePlayerHittingDetails(player);
-            initializePlayerPitchingDetails(player);
-            initializePlayerFieldingDetails(player);
-        }
-    }
 
-    private void initializePlayerHittingDetails(Player player) {
-        if (player.getPlayerHittingDetails() == null) {
-            PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
-            hittingDetails.setPlayer(player);
-            playerHittingDetailsService.save(hittingDetails);
-            player.setPlayerHittingDetails(hittingDetails);
+        Player[] arrPlayers = new Player[players.size()];
+
+        for (int i = 0; i < players.size(); i++) {
+            arrPlayers[i] = players.get(i);
+        }
+
+        for (Player player : arrPlayers) {
+            if (player.getPlayerHittingDetails() == null) {
+                PlayerHittingDetails hittingDetails = createPlayerHittingDetails(player);
+                player.setPlayerHittingDetails(hittingDetails);
+            }
+            if (player.getPlayerPitchingDetails() == null) {
+                PlayerPitchingDetails pitchingDetails = createPlayerPitchingDetails(player);
+                player.setPlayerPitchingDetails(pitchingDetails);
+            }
+            if (player.getPlayerFieldingDetails() == null) {
+                PlayerFieldingDetails fieldingDetails = createPlayerFieldingDetails(player);
+                player.setPlayerFieldingDetails(fieldingDetails);
+            }
             playerService.save(player);
         }
     }
 
-    private void initializePlayerPitchingDetails(Player player) {
-        if (player.getPlayerPitchingDetails() == null) {
-            PlayerPitchingDetails pitchingDetails = new PlayerPitchingDetails();
-            pitchingDetails.setPlayer(player);
-            playerPitchingDetailsService.save(pitchingDetails);
-            player.setPlayerPitchingDetails(pitchingDetails);
-            playerService.save(player);
-        }
+    private PlayerHittingDetails createPlayerHittingDetails(Player player) {
+        PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
+        hittingDetails.setPlayer(player);
+        playerHittingDetailsService.save(hittingDetails);
+        return hittingDetails;
     }
 
-    private void initializePlayerFieldingDetails(Player player) {
-        if (player.getPlayerFieldingDetails() == null) {
-            PlayerFieldingDetails fieldingDetails = new PlayerFieldingDetails();
-            fieldingDetails.setPlayer(player);
-            playerFieldingDetailsService.save(fieldingDetails);
-            player.setPlayerFieldingDetails(fieldingDetails);
-            playerService.save(player);
-        }
+    private PlayerPitchingDetails createPlayerPitchingDetails(Player player) {
+        PlayerPitchingDetails pitchingDetails = new PlayerPitchingDetails();
+        pitchingDetails.setPlayer(player);
+        playerPitchingDetailsService.save(pitchingDetails);
+        return pitchingDetails;
+    }
+
+    private PlayerFieldingDetails createPlayerFieldingDetails(Player player) {
+        PlayerFieldingDetails fieldingDetails = new PlayerFieldingDetails();
+        fieldingDetails.setPlayer(player);
+        playerFieldingDetailsService.save(fieldingDetails);
+        return fieldingDetails;
     }
 
     @PutMapping("/games/{gameId}/play")
@@ -156,57 +164,88 @@ public class GameRestController {
         theGame.setStartTimeOfGame(currentDate);
         Team homeTeam = theGame.getHomeTeam();
         Team visitorTeam = theGame.getVisitorTeam();
-
-        //TODO initialize all game details to the starting players
-
-        initializeGameDetails(homeTeam, theGame);
         gameService.save(theGame);
+        initializeGameDetails(homeTeam, visitorTeam, theGame);
     }
 
-    private void initializeGameDetails(Team team, Game theGame) {
+    private void initializeGameDetails(Team homeTeam, Team visitorTeam, Game theGame) {
+        Player batter = playerService.getStartingBatter(visitorTeam);
+        initializeGameHittingDetails(batter, theGame);
+        initializeGamePitchingDetails(homeTeam, theGame);
+        initializeGameFieldingDetails(homeTeam, theGame);
+    }
+
+    private void initializeGameHittingDetails(Player batter, Game theGame) {
+        batter.setOffencePosition(Constants.batter);
+        playerService.save(batter);
+
+        GameHittingDetails gameHittingDetails = new GameHittingDetails();
+        gameHittingDetails.setPlayer(batter);
+        gameHittingDetails.setGame(theGame);
+        gameHittingDetails.setPlateAppearences(1);
+        gameHittingDetailsService.save(gameHittingDetails);
+
+        //record the game and plate appearance statistics
+        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
+        int currentGamesStatistic = playerHittingDetails.getGames();
+        playerHittingDetails.setGames(currentGamesStatistic + 1);
+        int currentPlateAppearance = playerHittingDetails.getPlateAppearences();
+        playerHittingDetails.setPlateAppearences(currentPlateAppearance + 1);
+        playerHittingDetailsService.save(playerHittingDetails);
+    }
+
+    private void initializeGamePitchingDetails(Team team, Game theGame) {
+        Player pitcher = getCurrentPitcher(team);
+        GamePitchingDetails gamePitchingDetails = new GamePitchingDetails();
+        gamePitchingDetails.setPlayer(pitcher);
+        gamePitchingDetails.setGame(theGame);
+        gamePitchingDetailsService.save(gamePitchingDetails);
+
+        //record the "game" and "game started" statistics
+        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
+        int currentGamesStatistic = playerPitchingDetails.getGames();
+        playerPitchingDetails.setGames(currentGamesStatistic + 1);
+        int currentStartedGamesStatistic = playerPitchingDetails.getGamesStarted();
+        playerPitchingDetails.setGamesStarted(currentStartedGamesStatistic + 1);
+        playerPitchingDetailsService.save(playerPitchingDetails);
+    }
+
+    private void initializeGameFieldingDetails(Team team, Game theGame) {
         List<Player> players = team.getPlayers();
-        for (Player player : players) {
-            initializeGameHittingDetails(player, theGame);
-//            initializeGamePitchingDetails(player, theGame);
-//            initializeGameFieldingDetails(player, theGame);
+
+        Player[] arrPlayers = new Player[players.size()];
+
+        for (int i = 0; i < players.size(); i++) {
+            arrPlayers[i] = players.get(i);
         }
 
-//
-//        //find batter
-//        Game theGame = gameService.findById(gameId);
-//        Team homeTeam = theGame.getHomeTeam();
-//        Team visitorTeam = theGame.getVisitorTeam();
-//        Player batter = getCurrentBatter(visitorTeam);
-//        //create game hitting details for batter
-//        GameHittingDetails batterGameHittingDetails = new GameHittingDetails();
-//        batterGameHittingDetails.setPlayer(batter);
-//        batterGameHittingDetails.setGame(theGame);
-//        //increasing game (G) statistics to batter
-//        batterGameHittingDetails.setGames(batterGameHittingDetails.getGames() + 1);
-//        batter.getPlayerHittingDetails();
-//
-//        gameHittingDetailsService.save(batterGameHittingDetails);
-    }
+        for (Player player : arrPlayers) {
+            if ((player.getDefencePosition() != null) && (player.isStarter())) {
+                GameFieldingDetails gameFieldingDetails = new GameFieldingDetails();
+                gameFieldingDetails.setPlayer(player);
+                gameFieldingDetails.setGame(theGame);
+                gameFieldingDetailsService.save(gameFieldingDetails);
 
-    private void initializeGameHittingDetails(Player player, Game theGame) {
-        if (player.isStarter()) {
-            GameHittingDetails gameHittingDetails = new GameHittingDetails();
-            gameHittingDetails.setPlayer(player);
-            gameHittingDetails.setGame(theGame);
-        }
-    }
-
-    private Player getCurrentBatter(Team offensiveTeam) {
-        List<Player> players = offensiveTeam.getPlayers();
-        int lowestBattingOrder = 10;
-        Player batter = new Player();
-        for (Player player : players) {
-            if ((player.getBattingOrder() < lowestBattingOrder) && (player.getBattingOrder() != 0)) {
-                batter = player;
-                lowestBattingOrder = player.getBattingOrder();
+                //record the "games played" and "game started" statistics
+                PlayerFieldingDetails playerFieldingDetails = player.getPlayerFieldingDetails();
+                int currentGamesPlayed = playerFieldingDetails.getGamesPlayed();
+                playerFieldingDetails.setGamesPlayed(currentGamesPlayed + 1);
+                int currentGamesStarted = playerFieldingDetails.getGamesStarted();
+                playerFieldingDetails.setGamesPlayed(currentGamesStarted + 1);
+                playerFieldingDetailsService.save(playerFieldingDetails);
             }
         }
-        return batter;
+    }
+
+    //TODO take it from the database
+    private Player getCurrentPitcher(Team defensiveTeam) {
+        List<Player> players = defensiveTeam.getPlayers();
+        for (Player player : players) {
+            if (player.getDefencePosition().toLowerCase().equals(Constants.defendingPositionPitcher)) {
+                return player;
+            }
+        }
+        throw new RuntimeException("There is no pitcher!");
     }
 
     @PutMapping("/games/{gameId}/endGame")
@@ -234,6 +273,8 @@ public class GameRestController {
         int currentNumberOfBalls = batter.getBallCount();
         currentNumberOfBalls++;
         if (currentNumberOfBalls > 3) {
+            batter.setBallCount(0);
+            playerService.save(batter);
             walk(gameId, pitcherId, batterId);
             return;
         }
@@ -245,23 +286,50 @@ public class GameRestController {
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/walk")
     public void walk(@PathVariable int gameId,
                      @PathVariable int pitcherId, @PathVariable int batterId) {
+
         Game theGame = gameService.findById(gameId);
         theGame.setLastCommand("walk");
+        Player pitcher = playerService.findById(pitcherId);
         Player batter = playerService.findById(batterId);
-        pushRunnersWithOneBase(batter);
+
+        //assign a walk to the pitcher on PlayerPitchingDetails
+        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
+        int currentOverallBaseOnBalls = playerPitchingDetails.getBasesOnBalls();
+        playerPitchingDetails.setBasesOnBalls(currentOverallBaseOnBalls + 1);
+        playerPitchingDetailsService.save(playerPitchingDetails);
+
+        //assign a walk to the pitcher on GamePitchingDetails
+        GamePitchingDetails gamePitchingDetails = gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame);
+        int currentGameBaseOnBalls = gamePitchingDetails.getBasesOnBalls();
+        gamePitchingDetails.setBasesOnBalls(currentGameBaseOnBalls + 1);
+        gamePitchingDetailsService.save(gamePitchingDetails);
+
+        //increase number of walks by batter - player details
+        PlayerHittingDetails batterPlayerHittingDetails = batter.getPlayerHittingDetails();
+        batterPlayerHittingDetails.setBaseForBalls(batterPlayerHittingDetails.getBaseForBalls() + 1);
+        playerHittingDetailsService.save(batterPlayerHittingDetails);
+
+        //increase number of walks by batter - game details
+        GameHittingDetails batterGameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+        batterGameHittingDetails.setBaseForBalls(batterGameHittingDetails.getBaseForBalls() + 1);
+        gameHittingDetailsService.save(batterGameHittingDetails);
+
+        Team offensiveTeam = batter.getTeam();
+        pushRunnersWithOneBase(batter, pitcher, offensiveTeam, theGame);
+
+        //TODO livescore
     }
 
-    //not finished
-    private void pushRunnersWithOneBase(Player batter) {
-        Player firstBaseRunner = getFirstBaseRunner(batter);
-        Player secondBaseRunner = getSecondBaseRunner(batter);
-        Player thirdBaseRunner = getThirdBaseRunner(batter);
+    private void pushRunnersWithOneBase(Player batter, Player pitcher, Team offensiveTeam, Game theGame) {
+        Player firstBaseRunner = playerService.getFirstBaseRunner(offensiveTeam);
+        Player secondBaseRunner = playerService.getSecondBaseRunner(offensiveTeam);
+        Player thirdBaseRunner = playerService.getThirdBaseRunner(offensiveTeam);
 
         batter.setOffencePosition(Constants.runnerFirstBase);
-        //increase number of walks by batter
-        PlayerHittingDetails batterHittingDetails = batter.getPlayerHittingDetails();
-        batterHittingDetails.setBaseForBalls(batterHittingDetails.getBaseForBalls() + 1);
+        playerService.save(batter);
 
+        Player nextBatter = playerService.getNextBatter(batter);
+        initializeGameHittingDetails(nextBatter, theGame);
 
         if (firstBaseRunner != null) {
             firstBaseRunner.setOffencePosition(Constants.runnerSecondBase);
@@ -271,55 +339,54 @@ public class GameRestController {
                 playerService.save(secondBaseRunner);
                 if (thirdBaseRunner != null) {
                     thirdBaseRunner.setOffencePosition(Constants.runnerHomeBase);
-                    //increase runs by third base runner
-                    PlayerHittingDetails thirdBaseRunnerHittingDetails = thirdBaseRunner.getPlayerHittingDetails();
-                    thirdBaseRunnerHittingDetails.setRuns(thirdBaseRunnerHittingDetails.getRuns() + 1);
-                    //increase RBI by batter
-                    batterHittingDetails.setRunBattedIn(batterHittingDetails.getRunBattedIn() + 1);
                     playerService.save(thirdBaseRunner);
+                    scoreARun(thirdBaseRunner, batter, pitcher, theGame, true, true);
                 }
             }
         }
-        playerService.save(batter);
     }
 
-    private Player getFirstBaseRunner(Player batter) {
-        Team offensiveTeam = batter.getTeam();
-        List<Player> offensivePlayers = offensiveTeam.getPlayers();
-        Player firstBaseRunner = null;
-        for (Player player : offensivePlayers) {
-            if (player.getOffencePosition().equals(Constants.runnerFirstBase)) {
-                firstBaseRunner = player;
-                break;
-            }
-        }
-        return firstBaseRunner;
-    }
+    private void scoreARun(Player runner, Player batter, Player pitcher, Game theGame,
+                           boolean withBatterHelp, boolean isEarned) {
+        //increase player runs by third base runner
+        PlayerHittingDetails thirdBaseRunnerPlayerHittingDetails = runner.getPlayerHittingDetails();
+        thirdBaseRunnerPlayerHittingDetails.setRuns(thirdBaseRunnerPlayerHittingDetails.getRuns() + 1);
+        playerHittingDetailsService.save(thirdBaseRunnerPlayerHittingDetails);
 
-    private Player getSecondBaseRunner(Player batter) {
-        Team offensiveTeam = batter.getTeam();
-        List<Player> offensivePlayers = offensiveTeam.getPlayers();
-        Player secondBaseRunner = null;
-        for (Player player : offensivePlayers) {
-            if (player.getOffencePosition().equals(Constants.runnerSecondBase)) {
-                secondBaseRunner = player;
-                break;
-            }
-        }
-        return secondBaseRunner;
-    }
+        //increase game runs by third base runner
+        GameHittingDetails thirdBaseRunnerGameHittingDetails = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
+        thirdBaseRunnerGameHittingDetails.setRuns(thirdBaseRunnerGameHittingDetails.getRuns() + 1);
+        gameHittingDetailsService.save(thirdBaseRunnerGameHittingDetails);
 
-    private Player getThirdBaseRunner(Player batter) {
-        Team offensiveTeam = batter.getTeam();
-        List<Player> offensivePlayers = offensiveTeam.getPlayers();
-        Player thirdBaseRunner = null;
-        for (Player player : offensivePlayers) {
-            if (player.getOffencePosition().equals(Constants.runnerThirdBase)) {
-                thirdBaseRunner = player;
-                break;
-            }
+        if (withBatterHelp) {
+            //increase player RBI by batter
+            PlayerHittingDetails batterPlayerHittingDetails = batter.getPlayerHittingDetails();
+            batterPlayerHittingDetails.setRunBattedIn(batterPlayerHittingDetails.getRunBattedIn() + 1);
+            playerHittingDetailsService.save(batterPlayerHittingDetails);
+
+            //increase player RBI by batter
+            GameHittingDetails batterGameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+            batterGameHittingDetails.setRunBattedIn(batterGameHittingDetails.getRunBattedIn() + 1);
+            gameHittingDetailsService.save(batterGameHittingDetails);
         }
-        return thirdBaseRunner;
+
+        //increase runs by pitcher (player details)
+        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
+        playerPitchingDetails.setRuns(playerPitchingDetails.getRuns() + 1);
+
+        //increase runs by pitcher (game details)
+        GamePitchingDetails gamePitchingDetails = gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame);
+        gamePitchingDetails.setRuns(gamePitchingDetails.getRuns() + 1);
+
+        //if its by a pitcher mistake
+        if (isEarned) {
+            playerPitchingDetails.setEarnedRuns(playerPitchingDetails.getEarnedRuns() + 1);
+
+            gamePitchingDetails.setEarnedRuns(gamePitchingDetails.getEarnedRuns() + 1);
+        }
+
+        playerPitchingDetailsService.save(playerPitchingDetails);
+        gamePitchingDetailsService.save(gamePitchingDetails);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strike")

@@ -2,7 +2,7 @@ package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.PlayerFieldingDetailsRepository;
 import com.junak.scorekeeper.entity.PlayerFieldingDetails;
-import com.junak.scorekeeper.rest.error.player_fielding_details_error.PlayerFieldingDetailsNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,7 @@ public class PlayerFieldingDetailsServiceImpl implements PlayerFieldingDetailsSe
         if (result.isPresent()) {
             thePlayerFieldingDetails = result.get();
         } else {
-            throw new PlayerFieldingDetailsNotFoundException("Player fielding details id not found - " + id);
+            throw new GameNotFoundException("Player fielding details id not found - " + id);
         }
 
         return thePlayerFieldingDetails;

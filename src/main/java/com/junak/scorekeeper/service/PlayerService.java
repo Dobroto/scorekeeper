@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.entity.Player;
+import com.junak.scorekeeper.entity.Team;
 
 import java.util.List;
 
@@ -14,4 +15,14 @@ public interface PlayerService {
     void save(Player player);
 
     void deleteById(int id);
+
+    Player getFirstBaseRunner(Team team);
+
+    Player getSecondBaseRunner(Team team);
+
+    Player getThirdBaseRunner(Team team);
+
+    Player getStartingBatter(Team team);
+
+    Player getNextBatter(Player currentBatter);
 }

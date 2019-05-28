@@ -1,15 +1,15 @@
-package com.junak.scorekeeper.rest.error.game_hitting_details_error;
+package com.junak.scorekeeper.rest.exceptions;
 
-public class GameHittingDetailsErrorResponse {
+public class GameErrorResponse {
     private int status;
     private String message;
     private long timeStamp;
 
-    public GameHittingDetailsErrorResponse(){
+    public GameErrorResponse() {
 
     }
 
-    public GameHittingDetailsErrorResponse(int status, String message, long timeStamp){
+    public GameErrorResponse(int status, String message, long timeStamp) {
         this.status = status;
         this.message = message;
         this.timeStamp = timeStamp;

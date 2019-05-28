@@ -2,6 +2,8 @@ package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
@@ -16,6 +18,34 @@ public class PlayerFieldingDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+
+    @Column(name = "GS")
+    private int gamesStarted;
+
+    @Column(name = "G")
+    private int gamesPlayed;
+
+    @Column(name = "INN")
+    private int innings;
+
+    @Column(name = "TC")
+    private int totalChances;
+
+    @Column(name = "PO")
+    private int putOut;
+
+    @Column(name = "A")
+    private int assists;
+
+    @Column(name = "E")
+    private int errors;
+
+    @Column(name = "DP")
+    private int doublePlays;
+
+    @Generated(GenerationTime.ALWAYS)
+    @Column(name = "FPCT")
+    private Double averageOfErrorsPerTotalChances;
 
     @OneToOne(mappedBy = "playerFieldingDetails",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
@@ -42,4 +72,71 @@ public class PlayerFieldingDetails {
         this.player = player;
     }
 
+    public int getGamesStarted() {
+        return gamesStarted;
+    }
+
+    public void setGamesStarted(int gamesStarted) {
+        this.gamesStarted = gamesStarted;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
+    }
+
+    public int getInnings() {
+        return innings;
+    }
+
+    public void setInnings(int innings) {
+        this.innings = innings;
+    }
+
+    public int getTotalChances() {
+        return totalChances;
+    }
+
+    public void setTotalChances(int totalChances) {
+        this.totalChances = totalChances;
+    }
+
+    public int getPutOut() {
+        return putOut;
+    }
+
+    public void setPutOut(int putOut) {
+        this.putOut = putOut;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+    public int getErrors() {
+        return errors;
+    }
+
+    public void setErrors(int errors) {
+        this.errors = errors;
+    }
+
+    public int getDoublePlays() {
+        return doublePlays;
+    }
+
+    public void setDoublePlays(int doublePlays) {
+        this.doublePlays = doublePlays;
+    }
+
+    public Double getAverageOfErrorsPerTotalChances() {
+        return averageOfErrorsPerTotalChances;
+    }
 }

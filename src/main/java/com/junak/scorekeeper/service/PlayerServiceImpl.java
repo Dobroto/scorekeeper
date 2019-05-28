@@ -2,7 +2,8 @@ package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.PlayerRepository;
 import com.junak.scorekeeper.entity.Player;
-import com.junak.scorekeeper.rest.error.player_error.PlayerNotFoundException;
+import com.junak.scorekeeper.entity.Team;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class PlayerServiceImpl implements PlayerService {
         if (result.isPresent()) {
             thePlayer = result.get();
         } else {
-            throw new PlayerNotFoundException("Player id not found - " + theId);
+            throw new GameNotFoundException("Player id not found - " + theId);
         }
 
         return thePlayer;
@@ -51,6 +52,31 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public void deleteById(int theId) {
         playerRepository.deleteById(theId);
+    }
+
+    @Override
+    public Player getFirstBaseRunner(Team team) {
+        return playerRepository.getFirstBaseRunner(team);
+    }
+
+    @Override
+    public Player getSecondBaseRunner(Team team) {
+        return playerRepository.getSecondBaseRunner(team);
+    }
+
+    @Override
+    public Player getThirdBaseRunner(Team team) {
+        return playerRepository.getThirdBaseRunner(team);
+    }
+
+    @Override
+    public Player getStartingBatter(Team team) {
+        return playerRepository.getStartingBatter(team);
+    }
+
+    @Override
+    public Player getNextBatter(Player currentBatter) {
+        return playerRepository.getNextBatter(currentBatter);
     }
 
 }

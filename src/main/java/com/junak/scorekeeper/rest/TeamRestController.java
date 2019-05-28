@@ -1,7 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.Team;
-import com.junak.scorekeeper.rest.error.team_error.TeamNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class TeamRestController {
         Team theTeam = teamService.findById(teamId);
 
         if (theTeam == null) {
-            throw new TeamNotFoundException("Team id not found - " + teamId);
+            throw new GameNotFoundException("Team id not found - " + teamId);
         }
 
         return theTeam;
@@ -64,7 +64,7 @@ public class TeamRestController {
         // throw exception if null
 
         if (tempTeam == null) {
-            throw new TeamNotFoundException("Team id not found - " + teamId);
+            throw new GameNotFoundException("Team id not found - " + teamId);
         }
 
         teamService.deleteById(teamId);

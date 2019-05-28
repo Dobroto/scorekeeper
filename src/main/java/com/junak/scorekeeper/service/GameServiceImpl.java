@@ -2,7 +2,7 @@ package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.GameRepository;
 import com.junak.scorekeeper.entity.Game;
-import com.junak.scorekeeper.rest.error.game_error.GameNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

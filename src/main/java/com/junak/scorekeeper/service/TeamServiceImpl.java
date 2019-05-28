@@ -2,7 +2,7 @@ package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.TeamRepository;
 import com.junak.scorekeeper.entity.Team;
-import com.junak.scorekeeper.rest.error.team_error.TeamNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,7 @@ public class TeamServiceImpl implements TeamService {
         if (result.isPresent()) {
             theTeam = result.get();
         } else {
-            throw new TeamNotFoundException("Team id not found - " + id);
+            throw new GameNotFoundException("Team id not found - " + id);
         }
 
         return theTeam;

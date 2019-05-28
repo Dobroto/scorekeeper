@@ -2,7 +2,7 @@ package com.junak.scorekeeper.service;
 
 import com.junak.scorekeeper.dao.PlayerHittingDetailsRepository;
 import com.junak.scorekeeper.entity.PlayerHittingDetails;
-import com.junak.scorekeeper.rest.error.player_hitting_details_error.PlayerHittingDetailsNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,7 @@ public class PlayerHittingDetailsServiceImpl implements PlayerHittingDetailsServ
         if (result.isPresent()) {
             thePlayerHittingDetails = result.get();
         } else {
-            throw new PlayerHittingDetailsNotFoundException("Player hitting details id not found - " + id);
+            throw new GameNotFoundException("Player hitting details id not found - " + id);
         }
 
         return thePlayerHittingDetails;

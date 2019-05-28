@@ -2,6 +2,8 @@ package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
@@ -29,14 +31,9 @@ public class GamePitchingDetails {
     @Column(name = "IP")
     private double inningsPitched;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "ERA")
     private double earnedRunAverage;
-
-    @Column(name = "G")
-    private int games;
-
-    @Column(name = "GS")
-    private int gamesStarted;
 
     @Column(name = "SV")
     private int saves;
@@ -59,10 +56,11 @@ public class GamePitchingDetails {
     @Column(name = "SO")
     private int strikeOuts;
 
-    //TODO The formula needs to be set in the database.
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "AVG")
     private double average;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "WHIP")
     private double whips;
 
@@ -122,22 +120,6 @@ public class GamePitchingDetails {
 
     public double getEarnedRunAverage() {
         return earnedRunAverage;
-    }
-
-    public int getGames() {
-        return games;
-    }
-
-    public void setGames(int games) {
-        this.games = games;
-    }
-
-    public int getGamesStarted() {
-        return gamesStarted;
-    }
-
-    public void setGamesStarted(int gamesStarted) {
-        this.gamesStarted = gamesStarted;
     }
 
     public int getSaves() {

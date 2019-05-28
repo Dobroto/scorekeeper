@@ -1,21 +1,18 @@
-package com.junak.scorekeeper.rest.error.player_error;
-
+package com.junak.scorekeeper.rest.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice
-public class PlayerRestExceptionHandler {
-    // Add an exception handler for PlayerNotFoundException
+public class GameRestExceptionHandler {
+    // Add an exception handler for GameNotFoundException
 
     @ExceptionHandler
-    public ResponseEntity<PlayerErrorResponse> handleException(PlayerNotFoundException exc) {
+    public ResponseEntity<GameErrorResponse> handleException(GameNotFoundException exc) {
 
-        // create PlayerErrorResponse
-
-        PlayerErrorResponse error = new PlayerErrorResponse(
+        // create GameErrorResponse
+        exc.printStackTrace();
+        GameErrorResponse error = new GameErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 exc.getMessage(),
                 System.currentTimeMillis());
@@ -29,11 +26,11 @@ public class PlayerRestExceptionHandler {
     // Add another exception handler ... to catch any exception (catch all)
 
     @ExceptionHandler
-    public ResponseEntity<PlayerErrorResponse> handleException(Exception exc) {
+    public ResponseEntity<GameErrorResponse> handleException(Exception exc) {
 
-        // create PlayerErrorResponse
+        // create GameErrorResponse
 
-        PlayerErrorResponse error = new PlayerErrorResponse(
+        GameErrorResponse error = new GameErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 exc.getMessage(),
                 System.currentTimeMillis());

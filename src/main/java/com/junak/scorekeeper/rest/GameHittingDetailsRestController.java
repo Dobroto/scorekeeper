@@ -1,7 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.GameHittingDetails;
-import com.junak.scorekeeper.rest.error.game_hitting_details_error.GameHittingDetailsNotFoundException;
+import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.GameHittingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class GameHittingDetailsRestController {
         GameHittingDetails theHittingDetails = gameHittingDetailsService.findById(hittingDetailsId);
 
         if (theHittingDetails == null) {
-            throw new GameHittingDetailsNotFoundException("Hitting details id not found - " + hittingDetailsId);
+            throw new GameNotFoundException("Hitting details id not found - " + hittingDetailsId);
         }
 
         return theHittingDetails;
@@ -43,7 +43,7 @@ public class GameHittingDetailsRestController {
         // throw exception if null
 
         if (tempHittingDetails == null) {
-            throw new GameHittingDetailsNotFoundException("Hitting details id not found - " + hittingDetailsId);
+            throw new GameNotFoundException("Hitting details id not found - " + hittingDetailsId);
         }
 
         tempHittingDetails.getGame().setGameHittingDetails(null);

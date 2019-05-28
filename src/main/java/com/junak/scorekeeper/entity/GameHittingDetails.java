@@ -2,6 +2,8 @@ package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
@@ -17,9 +19,6 @@ public class GameHittingDetails {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "G")
-    private int games;
-
     @Column(name = "PA")
     private int plateAppearences;
 
@@ -32,6 +31,7 @@ public class GameHittingDetails {
     @Column(name = "HBP")
     private int hitByPitches;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "AB")
     private int atBat;
 
@@ -65,20 +65,25 @@ public class GameHittingDetails {
     @Column(name = "SF")
     private int sacrificeFlies;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "TB")
     private int totalBases;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "AVG")
-    private double battingAverage;
+    private Double battingAverage;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "OBP")
-    private double onBasePercantage;
+    private Double onBasePercantage;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "SLG")
-    private double sluggingPercentage;
+    private Double sluggingPercentage;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "OPS")
-    private double onBaseSlugging;
+    private Double onBaseSlugging;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
@@ -100,14 +105,6 @@ public class GameHittingDetails {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getGames() {
-        return games;
-    }
-
-    public void setGames(int games) {
-        this.games = games;
     }
 
     public int getPlateAppearences() {
@@ -230,19 +227,19 @@ public class GameHittingDetails {
         return totalBases;
     }
 
-    public double getBattingAverage() {
+    public Double getBattingAverage() {
         return battingAverage;
     }
 
-    public double getOnBasePercantage() {
+    public Double getOnBasePercantage() {
         return onBasePercantage;
     }
 
-    public double getSluggingPercentage() {
+    public Double getSluggingPercentage() {
         return sluggingPercentage;
     }
 
-    public double getOnBaseSlugging() {
+    public Double getOnBaseSlugging() {
         return onBaseSlugging;
     }
 
