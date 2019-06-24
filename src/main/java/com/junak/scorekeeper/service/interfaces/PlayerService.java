@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.interfaces;
 
 import com.junak.scorekeeper.entity.Player;
 import com.junak.scorekeeper.entity.Team;
@@ -12,7 +12,7 @@ public interface PlayerService {
 
     Player findById(int id);
 
-    void save(Player player);
+    Player save(Player player);
 
     void deleteById(int id);
 
@@ -25,4 +25,6 @@ public interface PlayerService {
     Player getStartingBatter(Team team);
 
     Player getNextBatter(Player currentBatter);
+
+    Player getPitcher(Team team);
 }

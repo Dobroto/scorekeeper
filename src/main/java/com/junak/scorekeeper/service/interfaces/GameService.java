@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.interfaces;
 
 import com.junak.scorekeeper.entity.Game;
 
@@ -9,7 +9,7 @@ public interface GameService {
 
     Game findById(int id);
 
-    void save(Game team);
+    Game save(Game team);
 
     void deleteById(int id);
 

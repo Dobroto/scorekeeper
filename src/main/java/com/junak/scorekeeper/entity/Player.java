@@ -43,6 +43,9 @@ public class Player {
     @Column(name = "ball_count")
     private int ballCount;
 
+    @Column(name = "strike_count")
+    private int strikeCount;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "player_hitting_details_id")
     private PlayerHittingDetails playerHittingDetails;
@@ -102,20 +105,6 @@ public class Player {
 
     public Player() {
 
-    }
-
-    public Player(String firstName, String lastName, int jerseyNumber, boolean starter, String defencePosition,
-                  PlayerHittingDetails playerHittingDetails, PlayerPitchingDetails playerPitchingDetails,
-                  PlayerFieldingDetails playerFieldingDetails, Team team) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.jerseyNumber = jerseyNumber;
-        this.starter = starter;
-        this.defencePosition = defencePosition;
-        this.playerHittingDetails = playerHittingDetails;
-        this.playerPitchingDetails = playerPitchingDetails;
-        this.playerFieldingDetails = playerFieldingDetails;
-        this.team = team;
     }
 
     public int getId() {
@@ -180,6 +169,14 @@ public class Player {
 
     public void setBallCount(int ballCount) {
         this.ballCount = ballCount;
+    }
+
+    public int getStrikeCount() {
+        return strikeCount;
+    }
+
+    public void setStrikeCount(int strikeCount) {
+        this.strikeCount = strikeCount;
     }
 
     public String getOffencePosition() {

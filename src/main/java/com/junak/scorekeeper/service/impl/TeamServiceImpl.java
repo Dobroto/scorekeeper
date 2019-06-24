@@ -1,8 +1,9 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.impl;
 
 import com.junak.scorekeeper.dao.TeamRepository;
 import com.junak.scorekeeper.entity.Team;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
+import com.junak.scorekeeper.service.interfaces.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +41,8 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void save(Team team) {
-        teamRepository.save(team);
+    public Team save(Team team) {
+        return teamRepository.save(team);
     }
 
     @Override

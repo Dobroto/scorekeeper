@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.interfaces;
 
 import com.junak.scorekeeper.entity.PlayerFieldingDetails;
 
@@ -9,7 +9,7 @@ public interface PlayerFieldingDetailsService {
 
     PlayerFieldingDetails findById(int id);
 
-    void save(PlayerFieldingDetails playerFieldingDetails);
+    PlayerFieldingDetails save(PlayerFieldingDetails playerFieldingDetails);
 
     void deleteById(int id);
 }

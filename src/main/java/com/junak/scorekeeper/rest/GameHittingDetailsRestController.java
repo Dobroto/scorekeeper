@@ -2,7 +2,7 @@ package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.GameHittingDetails;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
-import com.junak.scorekeeper.service.GameHittingDetailsService;
+import com.junak.scorekeeper.service.interfaces.GameHittingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +45,6 @@ public class GameHittingDetailsRestController {
         if (tempHittingDetails == null) {
             throw new GameNotFoundException("Hitting details id not found - " + hittingDetailsId);
         }
-
-        tempHittingDetails.getGame().setGameHittingDetails(null);
 
         gameHittingDetailsService.deleteById(hittingDetailsId);
 

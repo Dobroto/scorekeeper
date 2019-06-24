@@ -37,6 +37,10 @@ public class Game {
     @JoinColumn(name = "visitor_team_id")
     private Team visitorTeam;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "final_result_id")
+    private FinalResult finalResult;
+
     @OneToMany(mappedBy = "game",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
@@ -78,9 +82,14 @@ public class Game {
     private Player holdPitcher;
 
     @Column(name = "last_command")
-    public String lastCommand;
+    private String lastCommand;
 
-    public Game(){
+    @OneToMany(mappedBy = "game",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Inning> innings;
+
+    public Game() {
 
     }
 
@@ -122,6 +131,14 @@ public class Game {
 
     public void setVisitorTeam(Team visitorTeam) {
         this.visitorTeam = visitorTeam;
+    }
+
+    public FinalResult getFinalResult() {
+        return finalResult;
+    }
+
+    public void setFinalResult(FinalResult finalResult) {
+        this.finalResult = finalResult;
     }
 
     public Player getWinPitcher() {
@@ -194,5 +211,13 @@ public class Game {
 
     public void setLastCommand(String lastCommand) {
         this.lastCommand = lastCommand;
+    }
+
+    public List<Inning> getInnings() {
+        return innings;
+    }
+
+    public void setInnings(List<Inning> innings) {
+        this.innings = innings;
     }
 }

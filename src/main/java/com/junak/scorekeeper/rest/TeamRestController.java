@@ -2,7 +2,7 @@ package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.Team;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
-import com.junak.scorekeeper.service.TeamService;
+import com.junak.scorekeeper.service.interfaces.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

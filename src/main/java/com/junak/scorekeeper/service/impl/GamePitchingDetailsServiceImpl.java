@@ -1,10 +1,11 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.impl;
 
 import com.junak.scorekeeper.dao.GamePitchingDetailsRepository;
 import com.junak.scorekeeper.entity.Game;
 import com.junak.scorekeeper.entity.GamePitchingDetails;
 import com.junak.scorekeeper.entity.Player;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
+import com.junak.scorekeeper.service.interfaces.GamePitchingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +42,8 @@ public class GamePitchingDetailsServiceImpl implements GamePitchingDetailsServic
     }
 
     @Override
-    public void save(GamePitchingDetails gamePitchingDetails) {
-        gamePitchingDetailsRepository.save(gamePitchingDetails);
+    public GamePitchingDetails save(GamePitchingDetails gamePitchingDetails) {
+        return gamePitchingDetailsRepository.save(gamePitchingDetails);
     }
 
     @Override
@@ -52,13 +53,6 @@ public class GamePitchingDetailsServiceImpl implements GamePitchingDetailsServic
 
     @Override
     public GamePitchingDetails getGamePitchingDetails(Player pitcher, Game game) {
-        GamePitchingDetails theGamePitchingDetails = gamePitchingDetailsRepository.getGamePitchingDetails(pitcher, game);
-
-        if (theGamePitchingDetails == null) {
-            throw new GameNotFoundException("Game pitching details not found of player with id " + pitcher.getId()
-            + "game id " + game.getId());
-        }
-
-        return theGamePitchingDetails;
+        return gamePitchingDetailsRepository.getGamePitchingDetails(pitcher, game);
     }
 }

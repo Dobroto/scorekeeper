@@ -2,7 +2,7 @@ package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.entity.GamePitchingDetails;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
-import com.junak.scorekeeper.service.GamePitchingDetailsService;
+import com.junak.scorekeeper.service.interfaces.GamePitchingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +45,6 @@ public class GamePitchingDetailsRestController {
         if (tempPitchingDetails == null) {
             throw new GameNotFoundException("Pitching details id not found - " + pitchingDetailsId);
         }
-
-        tempPitchingDetails.getGame().setGamePitchingDetails(null);
 
         gamePitchingDetailsService.deleteById(pitchingDetailsId);
 

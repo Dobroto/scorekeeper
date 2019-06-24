@@ -18,4 +18,6 @@ public interface PlayerRepositoryCustom {
     Player getStartingBatter(Team team);
 
     Player getNextBatter(Player currentBatter);
+
+    Player getPitcher(Team team);
 }

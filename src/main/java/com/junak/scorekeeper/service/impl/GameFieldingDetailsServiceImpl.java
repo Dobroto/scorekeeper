@@ -1,10 +1,11 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.impl;
 
 import com.junak.scorekeeper.dao.GameFieldingDetailsRepository;
 import com.junak.scorekeeper.entity.Game;
 import com.junak.scorekeeper.entity.GameFieldingDetails;
 import com.junak.scorekeeper.entity.Player;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
+import com.junak.scorekeeper.service.interfaces.GameFieldingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +42,8 @@ public class GameFieldingDetailsServiceImpl implements GameFieldingDetailsServic
     }
 
     @Override
-    public void save(GameFieldingDetails gameFieldingDetails) {
-        gameFieldingDetailsRepository.save(gameFieldingDetails);
+    public GameFieldingDetails save(GameFieldingDetails gameFieldingDetails) {
+        return gameFieldingDetailsRepository.save(gameFieldingDetails);
     }
 
     @Override
@@ -52,13 +53,6 @@ public class GameFieldingDetailsServiceImpl implements GameFieldingDetailsServic
 
     @Override
     public GameFieldingDetails getGameFieldingDetails(Player fielder, Game game) {
-        GameFieldingDetails theGameFieldingDetails = gameFieldingDetailsRepository.getGameFieldingDetails(fielder, game);
-
-        if (theGameFieldingDetails == null) {
-            throw new GameNotFoundException("Game fielding details not found of player with id " + fielder.getId()
-                    + "game id " + game.getId());
-        }
-
-        return theGameFieldingDetails;
+        return gameFieldingDetailsRepository.getGameFieldingDetails(fielder, game);
     }
 }

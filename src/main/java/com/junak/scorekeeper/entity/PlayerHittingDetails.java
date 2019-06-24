@@ -23,7 +23,7 @@ public class PlayerHittingDetails {
     private int games;
 
     @Column(name = "PA")
-    private int plateAppearences;
+    private int plateAppearances;
 
     @Column(name = "SH")
     private int sacrificeHits;
@@ -113,12 +113,12 @@ public class PlayerHittingDetails {
         this.games = games;
     }
 
-    public int getPlateAppearences() {
-        return plateAppearences;
+    public int getPlateAppearances() {
+        return plateAppearances;
     }
 
-    public void setPlateAppearences(int plateAppearences) {
-        this.plateAppearences = plateAppearences;
+    public void setPlateAppearances(int plateAppearances) {
+        this.plateAppearances = plateAppearances;
     }
 
     public int getSacrificeHits() {

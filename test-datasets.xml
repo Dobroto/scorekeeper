@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <player id="1" first_name="Thor" last_name="Odinson" jersey_number="1" starter="1" defence_position="p" offense_position="NULL" batting_order="1" ball_count="0" team_id="1" player_hitting_details_id="1" player_pitching_details_id="1" player_fielding_details_id="1"  />
+  <player id="2" first_name="Tony" last_name="Stark" jersey_number="2" starter="1" defence_position="out" offense_position="NULL" batting_order="2" ball_count="0" team_id="1" player_hitting_details_id="2" player_pitching_details_id="2" player_fielding_details_id="2"  />
+  <player id="3" first_name="Professor" last_name="Hulk" jersey_number="3" starter="1" defence_position="c" offense_position="NULL" batting_order="3" ball_count="0" team_id="1" player_hitting_details_id="3" player_pitching_details_id="3" player_fielding_details_id="3"  />
+  <player id="4" first_name="Hawk" last_name="Eye" jersey_number="4" starter="1" defence_position="1b" offense_position="NULL" batting_order="4" ball_count="0" team_id="1" player_hitting_details_id="4" player_pitching_details_id="4" player_fielding_details_id="4"  />
+  <player id="5" first_name="Captain" last_name="America" jersey_number="5" starter="1" defence_position="2b" offense_position="NULL" batting_order="5" ball_count="0" team_id="1" player_hitting_details_id="5" player_pitching_details_id="5" player_fielding_details_id="5"  />
+  <player id="6" first_name="Spider" last_name="Man" jersey_number="6" starter="1" defence_position="3b" offense_position="NULL" batting_order="6" ball_count="0" team_id="1" player_hitting_details_id="6" player_pitching_details_id="6" player_fielding_details_id="6"  />
+  <player id="7" first_name="Thanos" last_name="NULL" jersey_number="1" starter="1" defence_position="p" offense_position="batter" batting_order="1" ball_count="0" team_id="2" player_hitting_details_id="7" player_pitching_details_id="7" player_fielding_details_id="7"  />
+  <player id="8" first_name="Ultron" last_name="NULL" jersey_number="2" starter="1" defence_position="c" offense_position="NULL" batting_order="2" ball_count="0" team_id="2" player_hitting_details_id="8" player_pitching_details_id="8" player_fielding_details_id="8"  />
+  <player id="9" first_name="Ronan" last_name="NULL" jersey_number="3" starter="1" defence_position="1b" offense_position="NULL" batting_order="3" ball_count="0" team_id="2" player_hitting_details_id="9" player_pitching_details_id="9" player_fielding_details_id="9"  />
+  <player id="10" first_name="Hela" last_name="NULL" jersey_number="4" starter="1" defence_position="2b" offense_position="NULL" batting_order="4" ball_count="0" team_id="2" player_hitting_details_id="10" player_pitching_details_id="10" player_fielding_details_id="10"  />
+  <player id="11" first_name="Red" last_name="Skull" jersey_number="5" starter="1" defence_position="3b" offense_position="NULL" batting_order="5" ball_count="0" team_id="2" player_hitting_details_id="11" player_pitching_details_id="11" player_fielding_details_id="11"  />
+  <player id="12" first_name="Dormammu" last_name="NULL" jersey_number="6" starter="1" defence_position="ss" offense_position="NULL" batting_order="6" ball_count="0" team_id="2" player_hitting_details_id="12" player_pitching_details_id="12" player_fielding_details_id="12"  />
+
+
+  <game id="1" start_time="NULL" end_time="NULL" home_team_id="1" visitor_team_id="2" win_pitcher_player_id="NULL" lose_pitcher_player_id="NULL" save_pitcher_player_id="NULL" blown_save_pitcher_player_id="NULL" hold_pitcher_player_id="NULL" last_command="NULL"  />
+
+
+  <team id="1" team_name_long="Avengers" team_name_short="Ave"  />
+  <team id="2" team_name_long="Baddies" team_name_short="Bad"  />
+
+
+  <game_hitting_details id="1" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0" player_id="7" game_id="1"  />
+
+
+  <game_pitching_details id="1" W="0" L="0" ER="0" IP="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0" player_id="1" game_id="1"  />
+
+
+  <game_fielding_details id="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0" player_id="1" game_id="1"  />
+  <game_fielding_details id="2" INN="0" TC="0" PO="0" A="0" E="0" DP="0" player_id="2" game_id="1"  />
+  <game_fielding_details id="3" INN="0" TC="0" PO="0" A="0" E="0" DP="0" player_id="3" game_id="1"  />
+  <game_fielding_details id="4" INN="0" TC="0" PO="0" A="0" E="0" DP="0" player_id="4" game_id="1"  />
+  <game_fielding_details id="5" INN="0" TC="0" PO="0" A="0" E="0" DP="0" player_id="5" game_id="1"  />
+  <game_fielding_details id="6" INN="0" TC="0" PO="0" A="0" E="0" DP="0" player_id="6" game_id="1"  />
+
+
+  <player_hitting_details id="1" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="2" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="3" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="4" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="5" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="6" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="7" G="1" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="8" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="9" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="10" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="11" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+  <player_hitting_details id="12" G="0" PA="0" SH="0" BB="0" HBP="0" R="0" H="0" 2B="0" 3B="0" HR="0" RBI="0" SO="0" SB="0" CS="0" SF="0"  />
+
+  <player_pitching_details id="1" W="0" L="0" ER="0" IP="0" G="1" GS="1" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="2" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="3" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="4" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="5" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="6" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="7" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="8" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="9" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="10" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="11" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+  <player_pitching_details id="12" W="0" L="0" ER="0" IP="0" G="0" GS="0" SV="0" SVO="0" H="0" R="0" HR="0" BB="0" SO="0" AVG="0"  />
+
+
+  <player_fielding_details id="1" GS="1" G="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="2" GS="1" G="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="3" GS="1" G="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="4" GS="1" G="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="5" GS="1" G="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="6" GS="1" G="1" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="7" GS="0" G="0" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="8" GS="0" G="0" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="9" GS="0" G="0" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="10" GS="0" G="0" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="11" GS="0" G="0" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+  <player_fielding_details id="12" GS="0" G="0" INN="0" TC="0" PO="0" A="0" E="0" DP="0"  />
+
+</dataset>

@@ -1,8 +1,9 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.impl;
 
 import com.junak.scorekeeper.dao.PlayerHittingDetailsRepository;
 import com.junak.scorekeeper.entity.PlayerHittingDetails;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
+import com.junak.scorekeeper.service.interfaces.PlayerHittingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,8 @@ public class PlayerHittingDetailsServiceImpl implements PlayerHittingDetailsServ
     }
 
     @Override
-    public void save(PlayerHittingDetails playerHittingDetails) {
-        playerHittingDetailsRepository.save(playerHittingDetails);
+    public PlayerHittingDetails save(PlayerHittingDetails playerHittingDetails) {
+        return playerHittingDetailsRepository.save(playerHittingDetails);
     }
 
     @Override

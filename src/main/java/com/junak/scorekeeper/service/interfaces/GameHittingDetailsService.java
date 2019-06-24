@@ -1,4 +1,4 @@
-package com.junak.scorekeeper.service;
+package com.junak.scorekeeper.service.interfaces;
 
 import com.junak.scorekeeper.entity.Game;
 import com.junak.scorekeeper.entity.GameHittingDetails;
@@ -11,7 +11,7 @@ public interface GameHittingDetailsService {
 
     GameHittingDetails findById(int id);
 
-    void save(GameHittingDetails gameHittingDetails);
+    GameHittingDetails save(GameHittingDetails gameHittingDetails);
 
     void deleteById(int id);
 
