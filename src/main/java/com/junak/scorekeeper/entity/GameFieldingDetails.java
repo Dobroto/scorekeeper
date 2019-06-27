@@ -20,7 +20,7 @@ public class GameFieldingDetails {
     private int id;
 
     @Column(name = "INN")
-    private int innings;
+    private double innings;
 
     @Column(name = "TC")
     private int totalChances;
@@ -79,11 +79,11 @@ public class GameFieldingDetails {
         this.game = game;
     }
 
-    public int getInnings() {
+    public double getInnings() {
         return innings;
     }
 
-    public void setInnings(int innings) {
+    public void setInnings(double innings) {
         this.innings = innings;
     }
 

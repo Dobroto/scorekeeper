@@ -195,11 +195,11 @@ public class GameRestController {
         logger.info("Game details initialized.");
     }
 
-    private void initializeGameDetails(Team homeTeam, Team visitorTeam, Game theGame) {
-        Player batter = playerService.getStartingBatter(visitorTeam);
+    private void initializeGameDetails(Team defendingTeam, Team offensiveTeam, Game theGame) {
+        Player batter = playerService.getStartingBatter(offensiveTeam);
         initializeGameHittingDetails(batter, theGame);
-        initializeGamePitchingDetails(homeTeam, theGame);
-        initializeGameFieldingDetails(homeTeam, theGame);
+        initializeGamePitchingDetails(defendingTeam, theGame);
+        initializeGameFieldingDetails(defendingTeam, theGame);
     }
 
     private void initializeGameHittingDetails(Player batter, Game theGame) {
@@ -233,7 +233,7 @@ public class GameRestController {
         //TODO This should be redone in case of substitution
         Player pitcher = playerService.getPitcher(team);
 
-        if(gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame) == null){
+        if (gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame) == null) {
             GamePitchingDetails gamePitchingDetails = new GamePitchingDetails();
             gamePitchingDetails.setPlayer(pitcher);
             gamePitchingDetails.setGame(theGame);
@@ -439,19 +439,22 @@ public class GameRestController {
         playerPitchingDetailsService.save(playerPitchingDetails);
         gamePitchingDetailsService.save(gamePitchingDetails);
 
-        //TODO logs
         Inning inning = inningService.getCurrentInning(theGame);
         FinalResult finalResult = theGame.getFinalResult();
         if (runner.getTeam().getId() == theGame.getHomeTeam().getId()) {
             int currentRunsHomeTeamInInning = inning.getHomeTeamRuns();
             inning.setHomeTeamRuns(currentRunsHomeTeamInInning + 1);
+            logger.info("Runs of inning with id {} were increased with one. Home team.", inning.getId());
             int currentRunsHomeTeamInGame = finalResult.getHomeTeamScore();
             finalResult.setHomeTeamScore(currentRunsHomeTeamInGame + 1);
+            logger.info("Runs of final_result with id {} were increased with one. Home team.", finalResult.getId());
         } else {
             int currentRunsVisitorTeamInInning = inning.getVisitorTeamRuns();
             inning.setVisitorTeamRuns(currentRunsVisitorTeamInInning + 1);
+            logger.info("Runs of inning with id {} were increased with one. Visitor team.", inning.getId());
             int currentRunsVisitorTeamInGame = finalResult.getVisitorTeamScore();
             finalResult.setVisitorTeamScore(currentRunsVisitorTeamInGame + 1);
+            logger.info("Runs of final_result with id {} were increased with one. Visitor team.", finalResult.getId());
         }
 
         inningService.save(inning);
@@ -467,17 +470,187 @@ public class GameRestController {
         Game theGame = gameService.findById(gameId);
         int currentNumberOfStrikes = batter.getStrikeCount();
         currentNumberOfStrikes++;
-        if (currentNumberOfStrikes > 2) {
-            logger.info("Pitcher with id {} striked-out batter with id {}.", pitcher.getId(), batter.getId());
-            updateDetailsStrikeOut(batter, pitcher, theGame);
-            currentNumberOfStrikes = 0;
-            batter.setOffencePosition(null);
-            //TODO if it's the last out,
-
-            setNextBatter(batter, theGame);
-        }
         batter.setStrikeCount(currentNumberOfStrikes);
         playerService.save(batter);
+        logger.info("Pitcher with id {} made a strike to batter with id {}", pitcherId, batterId);
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strikeoutLooking")
+    public void strikeoutLooking(@PathVariable int gameId,
+                                 @PathVariable int pitcherId, @PathVariable int batterId) {
+
+        Game theGame = gameService.findById(gameId);
+        Player pitcher = playerService.findById(pitcherId);
+        Player batter = playerService.findById(batterId);
+        Inning inning = inningService.getCurrentInning(theGame);
+
+        updateHittingStatisticsStrikeOut(batter, theGame);
+        updatePitchingStatisticsStrikeOut(pitcher, theGame);
+        updateFieldingStatisticsOut(pitcher.getTeam(), theGame);
+
+        batter.setOffencePosition(null);
+        batter.setStrikeCount(0);
+        playerService.save(batter);
+
+        inning.setCurrentOuts(inning.getCurrentOuts() + 1);
+        inningService.save(inning);
+
+        if (inning.getCurrentOuts() == 3) {
+            switchFields(theGame, inning, pitcher, batter);
+            logger.info("Teams switched fields.");
+        }
+
+        setNextBatter(batter, theGame);
+    }
+
+    private void switchFields(Game theGame, Inning inning, Player pitcher, Player batter) {
+        Team homeTeam = theGame.getHomeTeam();
+        Team visitorTeam = theGame.getVisitorTeam();
+        int currentInningNumber = inning.getInningNumber();
+
+        //if the visitor team is defending, begin new inning
+        if (pitcher.getTeam().getId() == visitorTeam.getId()) {
+            Inning nextInning = new Inning();
+            nextInning.setGame(theGame);
+            nextInning.setInningNumber(currentInningNumber + 1);
+            inningService.save(nextInning);
+            logger.info("Created new inning.");
+        } else {
+            inning.setCurrentOuts(0);
+            inningService.save(inning);
+            logger.info("Set current outs to 0.");
+        }
+        resetOffensePosition(batter.getTeam());
+        if ((inning.getInningNumber() == 1) && (pitcher.getTeam().getId() != visitorTeam.getId())) {
+            initializeGameDetails(visitorTeam, homeTeam, theGame);
+        }
+    }
+
+    private void resetOffensePosition(Team team) {
+        List<Player> players = team.getPlayers();
+
+        Player[] arrPlayers = new Player[players.size()];
+
+        for (int i = 0; i < players.size(); i++) {
+            arrPlayers[i] = players.get(i);
+        }
+
+        for (Player player : arrPlayers) {
+            if (player.getOffencePosition() != null) {
+                player.setOffencePosition(null);
+                playerService.save(player);
+            }
+        }
+        logger.info("Set offense position to null.");
+    }
+
+    private void updateHittingStatisticsStrikeOut(Player batter, Game theGame) {
+        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
+        playerHittingDetails.setStrikeOut(playerHittingDetails.getStrikeOut() + 1);
+        playerHittingDetailsService.save(playerHittingDetails);
+        logger.info("Increased strikeouts in player hitting statistics of batter with id {}", batter.getId());
+
+        GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+        gameHittingDetails.setStrikeOut(gameHittingDetails.getStrikeOut() + 1);
+        gameHittingDetailsService.save(gameHittingDetails);
+        logger.info("Increased strikeouts in game hitting statistics of batter with id {}", batter.getId());
+    }
+
+    private void updatePitchingStatisticsStrikeOut(Player pitcher, Game theGame) {
+        //increase innings pitched
+        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
+        double inningsPitchedAll = playerPitchingDetails.getInningsPitched();
+        double newInningsPithedAll = increaseInningsPlayed(inningsPitchedAll);
+        playerPitchingDetails.setInningsPitched(newInningsPithedAll);
+        logger.info("Player pitching details: Increased innings pitched of pitcher with id {} from {} to {}",
+                pitcher.getId(), inningsPitchedAll, newInningsPithedAll);
+        //increase strikeouts
+        playerPitchingDetails.setStrikeOuts(playerPitchingDetails.getStrikeOuts() + 1);
+        logger.info("Player pitching details: Increased strikeouts of pitcher with id {}.", pitcher.getId());
+        playerPitchingDetailsService.save(playerPitchingDetails);
+
+        //increase innings pitched
+        GamePitchingDetails gamePitchingDetails = gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame);
+        double inningsPitchedGame = gamePitchingDetails.getInningsPitched();
+        double newInningsPitchedGame = increaseInningsPlayed(inningsPitchedGame);
+        gamePitchingDetails.setInningsPitched(newInningsPitchedGame);
+        logger.info("Game pitching details: Increased innings pitched of pitcher with id {} from {} to {}",
+                pitcher.getId(), inningsPitchedGame, newInningsPitchedGame);
+        gamePitchingDetails.setStrikeOuts(gamePitchingDetails.getStrikeOuts() + 1);
+        logger.info("Game pitching details: Increased strikeouts of pitcher with id {}.", pitcher.getId());
+        gamePitchingDetailsService.save(gamePitchingDetails);
+
+    }
+
+    private double increaseInningsPlayed(double inningsPitchedAll) {
+        int decimal = (int) inningsPitchedAll;
+        int fractionalPart = (int) Math.round((inningsPitchedAll - decimal) * 10);
+        if ((fractionalPart == 0) || (fractionalPart == 1)) {
+            return inningsPitchedAll + 0.1;
+        } else {
+            return decimal + 1;
+        }
+    }
+
+
+    private void updateFieldingStatisticsOut(Team team, Game theGame) {
+        List<Player> fielders = team.getPlayers();
+
+        Player[] arrFielders = new Player[fielders.size()];
+
+        for (int i = 0; i < fielders.size(); i++) {
+            arrFielders[i] = fielders.get(i);
+        }
+
+        for (Player fielder : arrFielders) {
+            if (fielder.getDefencePosition() != null) {
+                PlayerFieldingDetails playerFieldingDetails = fielder.getPlayerFieldingDetails();
+                double inningsAll = playerFieldingDetails.getInnings();
+                double newInningsAll = increaseInningsPlayed(inningsAll);
+                playerFieldingDetails.setInnings(newInningsAll);
+                playerFieldingDetailsService.save(playerFieldingDetails);
+
+                GameFieldingDetails gameFieldingDetails =
+                        gameFieldingDetailsService.getGameFieldingDetails(fielder, theGame);
+                double inningsGame = gameFieldingDetails.getInnings();
+                double newInningsGame = increaseInningsPlayed(inningsGame);
+                gameFieldingDetails.setInnings(newInningsGame);
+                gameFieldingDetailsService.save(gameFieldingDetails);
+            }
+        }
+        logger.info("Increased innings played of fielders.");
+
+    }
+
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strikeoutSwinging")
+    public void strikeoutSwinging(@PathVariable int gameId,
+                                  @PathVariable int pitcherId, @PathVariable int batterId) {
+
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/caughtFoulTip")
+    public void caughtFoulTip(@PathVariable int gameId,
+                              @PathVariable int pitcherId, @PathVariable int batterId) {
+
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/buntFoul")
+    public void buntFoul(@PathVariable int gameId,
+                         @PathVariable int pitcherId, @PathVariable int batterId) {
+
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/dropped3rdStrike")
+    public void dropped3rdStrike(@PathVariable int gameId,
+                                 @PathVariable int pitcherId, @PathVariable int batterId) {
+
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/wildPitch3rdStrike")
+    public void wildPitch3rdStrike(@PathVariable int gameId,
+                                   @PathVariable int pitcherId, @PathVariable int batterId) {
+
     }
 
     private void setNextBatter(Player currentBatter, Game theGame) {
@@ -486,28 +659,9 @@ public class GameRestController {
         logger.info("Batter with id {} entered the game.", nextBatter.getId());
     }
 
-    private void updateDetailsStrikeOut(Player batter, Player pitcher, Game theGame) {
-        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
-        playerHittingDetails.setStrikeOut(playerHittingDetails.getStrikeOut() + 1);
-        playerHittingDetailsService.save(playerHittingDetails);
-
-        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
-        playerPitchingDetails.setStrikeOuts(playerPitchingDetails.getStrikeOuts() + 1);
-        playerPitchingDetailsService.save(playerPitchingDetails);
-
-        GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
-        gameHittingDetails.setStrikeOut(gameHittingDetails.getStrikeOut() + 1);
-        gameHittingDetailsService.save(gameHittingDetails);
-
-        GamePitchingDetails gamePitchingDetails = gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame);
-        gamePitchingDetails.setStrikeOuts(gamePitchingDetails.getStrikeOuts() + 1);
-        gamePitchingDetailsService.save(gamePitchingDetails);
-    }
-
     @PutMapping("/games/{gameId}/{batterId}/foul")
     public void foul(@PathVariable int gameId, @PathVariable int batterId) {
-        Game theGame = gameService.findById(gameId);
-        Inning inning = inningService.getCurrentInning(theGame);
+
         //TODO
     }
 
@@ -518,12 +672,6 @@ public class GameRestController {
 //        InningScoreCounterFacade.getScoreCounter().incrementOut();
     }
 
-    //when the batter doesn't swing the bat and he is out.
-    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strikeOutLooking")
-    public void strikeOutLooking(@PathVariable int gameId,
-                                 @PathVariable int pitcherId, @PathVariable int batterId) {
-        //TODO
-    }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/groundOut")
     public void groundOut(@PathVariable int gameId,

@@ -113,7 +113,7 @@ public class PlayerRepositoryCustomImpl implements PlayerRepositoryCustom {
 
         int nextBattingNumber = currentBatter.getBattingOrder() + 1;
         //TODO it should be 9
-        if(nextBattingNumber > 6){
+        if(nextBattingNumber > 9){
             nextBattingNumber = 1;
         }
 
