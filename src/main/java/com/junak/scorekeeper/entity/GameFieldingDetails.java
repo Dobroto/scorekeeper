@@ -22,6 +22,7 @@ public class GameFieldingDetails {
     @Column(name = "INN")
     private double innings;
 
+    @Generated(GenerationTime.ALWAYS)
     @Column(name = "TC")
     private int totalChances;
 
@@ -89,10 +90,6 @@ public class GameFieldingDetails {
 
     public int getTotalChances() {
         return totalChances;
-    }
-
-    public void setTotalChances(int totalChances) {
-        this.totalChances = totalChances;
     }
 
     public int getPutOut() {

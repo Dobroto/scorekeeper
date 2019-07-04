@@ -40,7 +40,7 @@ public class InningRepositoryCustomImpl implements InningRepositoryCustom {
         try {
             List<Inning> innings = theQuery.getResultList();
             return innings.get(innings.size() - 1);
-        } catch (NoResultException ex) {
+        } catch (NoResultException | ArrayIndexOutOfBoundsException ex) {
             logger.info("There is no inning for this game.");
             return null;
         }
