@@ -24,10 +24,10 @@ public class GameHittingDetailsRepositoryCustomImpl implements GameHittingDetail
     }
 
     @Override
-    public GameHittingDetails getGameHittingDetails(Player batter, Game game) {
+    public GameHittingDetails getGameHittingDetails(Player player, Game game) {
         Session currentSession = entityManager.unwrap(Session.class);
 
-        int playerId = batter.getId();
+        int playerId = player.getId();
         int gameId = game.getId();
         Query<GameHittingDetails> theQuery =
                 currentSession.createQuery("from GameHittingDetails where player_id=:playerId and game_id=:gameId");

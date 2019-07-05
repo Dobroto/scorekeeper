@@ -317,12 +317,6 @@ public class GameRestController {
         logger.info("Player Hitting Details: Increased caught stealing CS of runner with id {}", runnerId);
 
         GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
-        if (gameHittingDetails == null) {
-            gameHittingDetails = new GameHittingDetails();
-            gameHittingDetails.setPlayer(runner);
-            gameHittingDetails.setGame(theGame);
-        }
-
         gameHittingDetails.setCaughtStealing(gameHittingDetails.getCaughtStealing() + 1);
         gameHittingDetailsService.save(gameHittingDetails);
         logger.info("Game Hitting Details: Increased caught stealing CS of runner with id {}", runnerId);
@@ -348,18 +342,31 @@ public class GameRestController {
         }
     }
 
-    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/groundOut")
-    public void groundOut(@PathVariable int gameId,
-                          @PathVariable int pitcherId, @PathVariable int batterId) {
-        //TODO
-    }
+    @PutMapping("/games/{gameId}/{pitcherId}/{runnerId}/safe/{baseStolen}/stolenBase")
+    public void stolenBase(@PathVariable int gameId, @PathVariable int pitcherId, @PathVariable int runnerId,
+                               @PathVariable String baseStolen) {
+        Game theGame = gameService.findById(gameId);
+        Player pitcher = playerService.findById(pitcherId);
+        Player runner = playerService.findById(runnerId);
 
-    //offensive player reaching a base
-    // due to the defense's attempt to put out another baserunner
-    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/outedRunner/fieldersChoice")
-    public void fieldersChoice(@PathVariable int gameId,
-                               @PathVariable int pitcherId, @PathVariable int batterId) {
-        //TODO
+        PlayerHittingDetails playerHittingDetailsRunner = runner.getPlayerHittingDetails();
+        playerHittingDetailsRunner.setStolenBase(playerHittingDetailsRunner.getStolenBase() + 1);
+        playerHittingDetailsService.save(playerHittingDetailsRunner);
+        logger.info("Player Hitting Details: Increased stolen base of runner with id {}.", runnerId);
+
+        GameHittingDetails gameHittingDetailsRunner = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
+        gameHittingDetailsRunner.setStolenBase(gameHittingDetailsRunner.getStolenBase() + 1);
+        gameHittingDetailsService.save(gameHittingDetailsRunner);
+        logger.info("Game Hitting Details: Increased stolen base of runner with id {}.", runnerId);
+
+        if (baseStolen.equals(Constants.runnerHomeBase)) {
+            scoreARun(runner, null, pitcher, theGame, false,true);
+        }
+        runner.setOffencePosition(baseStolen);
+        playerService.save(runner);
+        logger.info("Runner with id {} stole {}.", runnerId, baseStolen);
+
+        //TODO livescore
     }
 
     private void initializePlayerDetails(Team team) {

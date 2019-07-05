@@ -52,7 +52,7 @@ public class GameHittingDetailsServiceImpl implements GameHittingDetailsService 
     }
 
     @Override
-    public GameHittingDetails getGameHittingDetails(Player batter, Game game) {
-        return gameHittingDetailsRepository.getGameHittingDetails(batter, game);
+    public GameHittingDetails getGameHittingDetails(Player player, Game game) {
+        return gameHittingDetailsRepository.getGameHittingDetails(player, game);
     }
 }

@@ -15,5 +15,5 @@ public interface GameHittingDetailsService {
 
     void deleteById(int id);
 
-    GameHittingDetails getGameHittingDetails(Player batter, Game game);
+    GameHittingDetails getGameHittingDetails(Player player, Game game);
 }
