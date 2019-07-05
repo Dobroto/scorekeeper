@@ -301,7 +301,7 @@ public class GameRestController {
 //    }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{runnerId}/{catcherId}/{basemanId}/out/caughtStealing")
-    public void caughtStealing(@PathVariable int pitcherId, @PathVariable int gameId, @PathVariable int runnerId,
+    public void caughtStealing(@PathVariable int gameId, @PathVariable int pitcherId, @PathVariable int runnerId,
                                @PathVariable int catcherId, @PathVariable int basemanId) {
         Game theGame = gameService.findById(gameId);
         Player pitcher = playerService.findById(pitcherId);
@@ -344,7 +344,7 @@ public class GameRestController {
 
     @PutMapping("/games/{gameId}/{pitcherId}/{runnerId}/safe/{baseStolen}/stolenBase")
     public void stolenBase(@PathVariable int gameId, @PathVariable int pitcherId, @PathVariable int runnerId,
-                               @PathVariable String baseStolen) {
+                           @PathVariable String baseStolen) {
         Game theGame = gameService.findById(gameId);
         Player pitcher = playerService.findById(pitcherId);
         Player runner = playerService.findById(runnerId);
@@ -360,13 +360,160 @@ public class GameRestController {
         logger.info("Game Hitting Details: Increased stolen base of runner with id {}.", runnerId);
 
         if (baseStolen.equals(Constants.runnerHomeBase)) {
-            scoreARun(runner, null, pitcher, theGame, false,true);
+            scoreARun(runner, null, pitcher, theGame, false, true);
         }
         runner.setOffencePosition(baseStolen);
         playerService.save(runner);
         logger.info("Runner with id {} stole {}.", runnerId, baseStolen);
 
         //TODO livescore
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/safe/hitSingle")
+    public void hitSingle(@PathVariable int pitcherId, @PathVariable int gameId, @PathVariable int batterId) {
+
+        Game theGame = gameService.findById(gameId);
+        Player pitcher = playerService.findById(pitcherId);
+        Player batter = playerService.findById(batterId);
+
+        //increase hits to first base
+        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
+        playerHittingDetails.setHits(playerHittingDetails.getHits() + 1);
+        playerHittingDetailsService.save(playerHittingDetails);
+        logger.info("Player Hitting Details: Increased single hits of batter with id {}.", batterId);
+
+        GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+        gameHittingDetails.setHits(gameHittingDetails.getHits() + 1);
+        gameHittingDetailsService.save(gameHittingDetails);
+        logger.info("Game Hitting Details: Increased single hits of batter with id {} in game with id {}.",
+                batterId, gameId);
+
+        //increase hits allowed by pitcher
+        increaseHitsAllowedByPitcher(pitcher, theGame);
+
+        batter.setOffencePosition(Constants.runnerFirstBase);
+        playerService.save(batter);
+        logger.info("Batter with id {} moved to first base.", batterId);
+
+        setNextBatter(batter, theGame);
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/safe/hitDouble")
+    public void hitDouble(@PathVariable int pitcherId, @PathVariable int gameId, @PathVariable int batterId) {
+        Game theGame = gameService.findById(gameId);
+        Player pitcher = playerService.findById(pitcherId);
+        Player batter = playerService.findById(batterId);
+
+        //increase hits to second base
+        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
+        playerHittingDetails.setDoubleHit(playerHittingDetails.getDoubleHit() + 1);
+        playerHittingDetailsService.save(playerHittingDetails);
+        logger.info("Player Hitting Details: Increased double hits of batter with id {}.", batterId);
+
+        GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+        gameHittingDetails.setDoubleHit(gameHittingDetails.getDoubleHit() + 1);
+        gameHittingDetailsService.save(gameHittingDetails);
+        logger.info("Game Hitting Details: Increased double hits of batter with id {} in game with id {}.",
+                batterId, gameId);
+
+        //increase hits allowed by pitcher
+        increaseHitsAllowedByPitcher(pitcher, theGame);
+
+        batter.setOffencePosition(Constants.runnerSecondBase);
+        playerService.save(batter);
+        logger.info("Batter with id {} moved to second base.", batterId);
+
+        setNextBatter(batter, theGame);
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/safe/hitTriple")
+    public void hitTriple(@PathVariable int pitcherId, @PathVariable int gameId, @PathVariable int batterId) {
+        Game theGame = gameService.findById(gameId);
+        Player pitcher = playerService.findById(pitcherId);
+        Player batter = playerService.findById(batterId);
+
+        //increase hits to third base
+        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
+        playerHittingDetails.setTripleHit(playerHittingDetails.getTripleHit() + 1);
+        playerHittingDetailsService.save(playerHittingDetails);
+        logger.info("Player Hitting Details: Increased triple hits of batter with id {}.", batterId);
+
+        GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+        gameHittingDetails.setTripleHit(gameHittingDetails.getTripleHit() + 1);
+        gameHittingDetailsService.save(gameHittingDetails);
+        logger.info("Game Hitting Details: Increased triple hits of batter with id {} in game with id {}.",
+                batterId, gameId);
+
+        //increase hits allowed by pitcher
+        increaseHitsAllowedByPitcher(pitcher, theGame);
+
+        batter.setOffencePosition(Constants.runnerThirdBase);
+        playerService.save(batter);
+        logger.info("Batter with id {} moved to third base.", batterId);
+
+        setNextBatter(batter, theGame);
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/safe/homeRun")
+    public void homeRun(@PathVariable int pitcherId, @PathVariable int gameId, @PathVariable int batterId) {
+        Game theGame = gameService.findById(gameId);
+        Player pitcher = playerService.findById(pitcherId);
+        Player batter = playerService.findById(batterId);
+
+        //increase home runs
+        PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
+        playerHittingDetails.setHomeRun(playerHittingDetails.getHomeRun() + 1);
+        playerHittingDetailsService.save(playerHittingDetails);
+        logger.info("Player Hitting Details: Increased home runs of batter with id {}.", batterId);
+
+        GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(batter, theGame);
+        gameHittingDetails.setHomeRun(gameHittingDetails.getHomeRun() + 1);
+        gameHittingDetailsService.save(gameHittingDetails);
+        logger.info("Game Hitting Details: Increased home runs of batter with id {} in game with id {}.",
+                batterId, gameId);
+
+        //increase hits allowed by pitcher
+        increaseHitsAllowedByPitcher(pitcher, theGame);
+
+        //increase home runs allowed by pitcher
+        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
+        playerPitchingDetails.setHomeRuns(playerPitchingDetails.getHomeRuns() + 1);
+        playerPitchingDetailsService.save(playerPitchingDetails);
+        logger.info("Player Pitching Details: Increase home runs allowed by pitcher with id {}", pitcherId);
+
+        GamePitchingDetails gamePitchingDetails = gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame);
+        gamePitchingDetails.setHomeRuns(gamePitchingDetails.getHomeRuns() + 1);
+        gamePitchingDetailsService.save(gamePitchingDetails);
+        logger.info("Game Pitching Details: Increase home runs allowed by pitcher with id {} in game with id {}",
+                pitcherId, gameId);
+
+        scoreARun(batter, batter, pitcher, theGame, true, true);
+
+        Player firstBaseRunner = playerService.getFirstBaseRunner(batter.getTeam());
+        Player secondBaseRunner = playerService.getSecondBaseRunner(batter.getTeam());
+        Player thirdBaseRunner = playerService.getThirdBaseRunner(batter.getTeam());
+
+        if (firstBaseRunner != null) {
+            scoreARun(firstBaseRunner, batter, pitcher, theGame, true, true);
+            firstBaseRunner.setOffencePosition(Constants.runnerHomeBase);
+            playerService.save(firstBaseRunner);
+        }
+        if (secondBaseRunner != null) {
+            scoreARun(secondBaseRunner, batter, pitcher, theGame, true, true);
+            secondBaseRunner.setOffencePosition(Constants.runnerHomeBase);
+            playerService.save(secondBaseRunner);
+        }
+        if (thirdBaseRunner != null) {
+            scoreARun(thirdBaseRunner, batter, pitcher, theGame, true, true);
+            thirdBaseRunner.setOffencePosition(Constants.runnerHomeBase);
+            playerService.save(thirdBaseRunner);
+        }
+
+        batter.setOffencePosition(Constants.runnerHomeBase);
+        playerService.save(batter);
+        logger.info("Batter with id {} moved to home base.", batterId);
+
+        setNextBatter(batter, theGame);
     }
 
     private void initializePlayerDetails(Team team) {
@@ -535,16 +682,16 @@ public class GameRestController {
 
     private void scoreARun(Player runner, Player batter, Player pitcher, Game theGame,
                            boolean withBatterHelp, boolean isEarned) {
-        //increase player runs by third base runner
-        PlayerHittingDetails thirdBaseRunnerPlayerHittingDetails = runner.getPlayerHittingDetails();
-        thirdBaseRunnerPlayerHittingDetails.setRuns(thirdBaseRunnerPlayerHittingDetails.getRuns() + 1);
-        playerHittingDetailsService.save(thirdBaseRunnerPlayerHittingDetails);
+        //increase player runs of runner
+        PlayerHittingDetails PlayerHittingDetailsRunner = runner.getPlayerHittingDetails();
+        PlayerHittingDetailsRunner.setRuns(PlayerHittingDetailsRunner.getRuns() + 1);
+        playerHittingDetailsService.save(PlayerHittingDetailsRunner);
         logger.info("Increase player runs by runner with id {}.", runner.getId());
 
-        //increase game runs by third base runner
-        GameHittingDetails thirdBaseRunnerGameHittingDetails = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
-        thirdBaseRunnerGameHittingDetails.setRuns(thirdBaseRunnerGameHittingDetails.getRuns() + 1);
-        gameHittingDetailsService.save(thirdBaseRunnerGameHittingDetails);
+        //increase game runs of runner
+        GameHittingDetails GameHittingDetailsRunner = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
+        GameHittingDetailsRunner.setRuns(GameHittingDetailsRunner.getRuns() + 1);
+        gameHittingDetailsService.save(GameHittingDetailsRunner);
         logger.info("Increase game runs by runner with id {}.", runner.getId());
 
         if (withBatterHelp) {
@@ -788,6 +935,16 @@ public class GameRestController {
         gameFieldingDetailsService.save(gameFieldingDetailsBaseman);
         logger.info("Game Fielding Details: Increased putouts PO of player with id {} in game with id {}",
                 baseman.getId(), theGame.getId());
+    }
+
+    private void increaseHitsAllowedByPitcher(Player pitcher, Game theGame) {
+        PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();
+        playerPitchingDetails.setHits(playerPitchingDetails.getHits() + 1);
+        playerPitchingDetailsService.save(playerPitchingDetails);
+
+        GamePitchingDetails gamePitchingDetails = gamePitchingDetailsService.getGamePitchingDetails(pitcher, theGame);
+        gamePitchingDetails.setHits(gamePitchingDetails.getHits() + 1);
+        gamePitchingDetailsService.save(gamePitchingDetails);
     }
 
 }

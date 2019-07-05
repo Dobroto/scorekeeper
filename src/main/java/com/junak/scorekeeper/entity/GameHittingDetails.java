@@ -45,7 +45,7 @@ public class GameHittingDetails {
     private int doubleHit;
 
     @Column(name = "3B")
-    private int trippleHit;
+    private int tripleHit;
 
     @Column(name = "HR")
     private int homeRun;
@@ -167,12 +167,12 @@ public class GameHittingDetails {
         this.doubleHit = doubleHit;
     }
 
-    public int getTrippleHit() {
-        return trippleHit;
+    public int getTripleHit() {
+        return tripleHit;
     }
 
-    public void setTrippleHit(int trippleHit) {
-        this.trippleHit = trippleHit;
+    public void setTripleHit(int tripleHit) {
+        this.tripleHit = tripleHit;
     }
 
     public int getHomeRun() {
