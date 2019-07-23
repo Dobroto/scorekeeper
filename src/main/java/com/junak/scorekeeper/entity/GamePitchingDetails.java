@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -33,7 +34,7 @@ public class GamePitchingDetails {
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "ERA")
-    private double earnedRunAverage;
+    private Double earnedRunAverage;
 
     @Column(name = "SV")
     private int saves;
@@ -58,19 +59,23 @@ public class GamePitchingDetails {
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "AVG")
-    private double average;
+    private Double average;
 
     @Generated(GenerationTime.ALWAYS)
     @Column(name = "WHIP")
-    private double whips;
+    private Double whips;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "player_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Player player;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "game_id")
     private Game game;
 
@@ -118,7 +123,7 @@ public class GamePitchingDetails {
         this.inningsPitched = inningsPitched;
     }
 
-    public double getEarnedRunAverage() {
+    public Double getEarnedRunAverage() {
         return earnedRunAverage;
     }
 
@@ -178,11 +183,11 @@ public class GamePitchingDetails {
         this.strikeOuts = strikeOuts;
     }
 
-    public double getAverage() {
+    public Double getAverage() {
         return average;
     }
 
-    public double getWhips() {
+    public Double getWhips() {
         return whips;
     }
 

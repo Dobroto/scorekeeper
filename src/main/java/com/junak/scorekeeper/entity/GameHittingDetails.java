@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -20,7 +21,7 @@ public class GameHittingDetails {
     private int id;
 
     @Column(name = "PA")
-    private int plateAppearences;
+    private int plateAppearances;
 
     @Column(name = "SH")
     private int sacrificeHits;
@@ -87,11 +88,15 @@ public class GameHittingDetails {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "player_id")
     private Player player;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "game_id")
     private Game game;
 
@@ -107,12 +112,12 @@ public class GameHittingDetails {
         this.id = id;
     }
 
-    public int getPlateAppearences() {
-        return plateAppearences;
+    public int getPlateAppearances() {
+        return plateAppearances;
     }
 
-    public void setPlateAppearences(int plateAppearences) {
-        this.plateAppearences = plateAppearences;
+    public void setPlateAppearances(int plateAppearances) {
+        this.plateAppearances = plateAppearances;
     }
 
     public int getSacrificeHits() {

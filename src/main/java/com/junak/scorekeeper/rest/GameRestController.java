@@ -578,7 +578,7 @@ public class GameRestController {
             GameHittingDetails gameHittingDetails = new GameHittingDetails();
             gameHittingDetails.setPlayer(batter);
             gameHittingDetails.setGame(theGame);
-            gameHittingDetails.setPlateAppearences(1);
+            gameHittingDetails.setPlateAppearances(1);
             gameHittingDetailsService.save(gameHittingDetails);
             logger.info("Created game hitting details of batter with id {}.", batter.getId());
 

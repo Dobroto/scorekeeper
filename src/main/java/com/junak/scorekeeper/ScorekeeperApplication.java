@@ -2,7 +2,6 @@ package com.junak.scorekeeper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
@@ -17,5 +16,4 @@ public class ScorekeeperApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ScorekeeperApplication.class, args);
 	}
-
 }
