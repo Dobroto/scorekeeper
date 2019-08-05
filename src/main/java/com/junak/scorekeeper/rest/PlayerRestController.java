@@ -1,33 +1,44 @@
 package com.junak.scorekeeper.rest;
 
+import com.junak.scorekeeper.dto.PlayerDto;
 import com.junak.scorekeeper.entity.GameFieldingDetails;
 import com.junak.scorekeeper.entity.GameHittingDetails;
 import com.junak.scorekeeper.entity.GamePitchingDetails;
 import com.junak.scorekeeper.entity.Player;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
-import com.junak.scorekeeper.service.interfaces.GameFieldingDetailsService;
-import com.junak.scorekeeper.service.interfaces.GameHittingDetailsService;
-import com.junak.scorekeeper.service.interfaces.GamePitchingDetailsService;
-import com.junak.scorekeeper.service.interfaces.PlayerService;
+import com.junak.scorekeeper.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class PlayerRestController {
+
     private PlayerService playerService;
+    private TeamService teamService;
+    private PlayerHittingDetailsService playerHittingDetailsService;
+    private PlayerPitchingDetailsService playerPitchingDetailsService;
+    private PlayerFieldingDetailsService playerFieldingDetailsService;
     private GameHittingDetailsService gameHittingDetailsService;
     private GamePitchingDetailsService gamePitchingDetailsService;
     private GameFieldingDetailsService gameFieldingDetailsService;
 
-
     @Autowired
-    public PlayerRestController(PlayerService playerService, GameHittingDetailsService gameHittingDetailsService,
+    public PlayerRestController(PlayerService playerService, TeamService teamService,
+                                PlayerHittingDetailsService playerHittingDetailsService,
+                                PlayerPitchingDetailsService playerPitchingDetailsService,
+                                PlayerFieldingDetailsService playerFieldingDetailsService,
+                                GameHittingDetailsService gameHittingDetailsService,
                                 GamePitchingDetailsService gamePitchingDetailsService,
                                 GameFieldingDetailsService gameFieldingDetailsService) {
         this.playerService = playerService;
+        this.teamService = teamService;
+        this.playerHittingDetailsService = playerHittingDetailsService;
+        this.playerPitchingDetailsService = playerPitchingDetailsService;
+        this.playerFieldingDetailsService = playerFieldingDetailsService;
         this.gameHittingDetailsService = gameHittingDetailsService;
         this.gamePitchingDetailsService = gamePitchingDetailsService;
         this.gameFieldingDetailsService = gameFieldingDetailsService;
@@ -35,19 +46,30 @@ public class PlayerRestController {
 
     // expose "/players" and return list of players
     @GetMapping("/players")
-    public List<Player> findAll() {
-        return playerService.findAll();
+    public List<PlayerDto> findAll() {
+        List<Player> players = playerService.findAll();
+        List<PlayerDto> playerDtos = new ArrayList<>();
+        for (Player player : players) {
+            playerDtos.add(convertToDto(player));
+        }
+        return playerDtos;
     }
 
     @GetMapping("/players/team/{teamId}")
-    public List<Player> findAllTeamPlayers(@PathVariable int teamId) {
-        return playerService.findAllTeamPlayers(teamId);
+    public List<PlayerDto> findAllTeamPlayers(@PathVariable int teamId) {
+        List<Player> players = playerService.findAllTeamPlayers(teamId);
+
+        List<PlayerDto> playerDtos = new ArrayList<>();
+        for (Player player : players) {
+            playerDtos.add(convertToDto(player));
+        }
+        return playerDtos;
     }
 
     // add mapping for GET /players/{playerId}
 
     @GetMapping("/players/{playerId}")
-    public Player getPlayer(@PathVariable int playerId) {
+    public PlayerDto getPlayer(@PathVariable int playerId) {
 
         Player thePlayer = playerService.findById(playerId);
 
@@ -55,19 +77,20 @@ public class PlayerRestController {
             throw new GameNotFoundException("Player id not found - " + playerId);
         }
 
-        return thePlayer;
+        return convertToDto(thePlayer);
     }
 
     // add mapping for POST /players - add new player
 
     @PostMapping("/players")
-    public Player addPlayer(@RequestBody Player thePlayer) {
+    public Player addPlayer(@RequestBody PlayerDto thePlayerDto) {
 
         // also just in case they pass an id in JSON ... set id to 0
         // this is to force a save of new item ... instead of update
 
-        thePlayer.setId(0);
+        thePlayerDto.setId(0);
 
+        Player thePlayer = convertToEntity(thePlayerDto);
         playerService.save(thePlayer);
 
         return thePlayer;
@@ -76,8 +99,9 @@ public class PlayerRestController {
     // add mapping for PUT /players - update existing player
 
     @PutMapping("/players")
-    public Player updatePlayer(@RequestBody Player thePlayer) {
+    public Player updatePlayer(@RequestBody PlayerDto thePlayerDto) {
 
+        Player thePlayer = convertToEntity(thePlayerDto);
         playerService.save(thePlayer);
 
         return thePlayer;
@@ -157,5 +181,67 @@ public class PlayerRestController {
 //                gameFieldingDetailsService.deleteById(detailsToDelete.getId());
             }
         }
+    }
+
+    private PlayerDto convertToDto(Player player) {
+        PlayerDto playerDto = new PlayerDto();
+        playerDto.setId(player.getId());
+        playerDto.setFirstName(player.getFirstName());
+        playerDto.setLastName(player.getLastName());
+        playerDto.setJerseyNumber(player.getJerseyNumber());
+        playerDto.setStarter(player.isStarter());
+        playerDto.setDefencePosition(player.getDefencePosition());
+        playerDto.setOffencePosition(player.getOffencePosition());
+        playerDto.setBattingOrder(player.getBattingOrder());
+        playerDto.setBallCount(player.getBallCount());
+        playerDto.setStrikeCount(player.getStrikeCount());
+
+        if (player.getPlayerHittingDetails() != null) {
+            playerDto.setPlayerHittingDetails(player.getPlayerHittingDetails().getId());
+        }
+        if (player.getPlayerPitchingDetails() != null) {
+            playerDto.setPlayerPitchingDetails(player.getPlayerPitchingDetails().getId());
+        }
+        if (player.getPlayerFieldingDetails() != null) {
+            playerDto.setPlayerFieldingDetails(player.getPlayerFieldingDetails().getId());
+        }
+        if (player.getTeam() != null) {
+            playerDto.setTeam(player.getTeam().getId());
+        }
+
+        return playerDto;
+    }
+
+    private Player convertToEntity(PlayerDto playerDto) {
+        Player player = new Player();
+
+        if(playerDto.getId() != 0) {
+            player = playerService.findById(playerDto.getId());
+        }
+
+        player.setFirstName(playerDto.getFirstName());
+        player.setLastName(playerDto.getLastName());
+        player.setJerseyNumber(playerDto.getJerseyNumber());
+        player.setStarter(playerDto.isStarter());
+        player.setDefencePosition(playerDto.getDefencePosition());
+        player.setOffencePosition(playerDto.getOffencePosition());
+        player.setBattingOrder(playerDto.getBattingOrder());
+        player.setBallCount(playerDto.getBallCount());
+        player.setStrikeCount(playerDto.getStrikeCount());
+
+        if (playerDto.getPlayerHittingDetails() != 0) {
+            player.setPlayerHittingDetails(playerHittingDetailsService.findById(playerDto.getPlayerHittingDetails()));
+        }
+        if (playerDto.getPlayerFieldingDetails() != 0) {
+            player.setPlayerFieldingDetails(playerFieldingDetailsService.findById(playerDto.getPlayerFieldingDetails()));
+        }
+        if (playerDto.getPlayerPitchingDetails() !=0) {
+            player.setPlayerPitchingDetails(playerPitchingDetailsService.findById(playerDto.getPlayerPitchingDetails()));
+        }
+        if (playerDto.getTeam() != 0) {
+            player.setTeam(teamService.findById(playerDto.getTeam()));
+        }
+
+        return player;
     }
 }
