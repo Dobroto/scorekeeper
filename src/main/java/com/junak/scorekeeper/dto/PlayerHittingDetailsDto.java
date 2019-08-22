@@ -1,99 +1,53 @@
-package com.junak.scorekeeper.entity;
+package com.junak.scorekeeper.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "player_hitting_details")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
-public class PlayerHittingDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class PlayerHittingDetailsDto {
     private int id;
 
-    @Column(name = "G")
     private int games;
 
-    @Column(name = "PA")
     private int plateAppearances;
 
-    @Column(name = "SH")
     private int sacrificeHits;
 
-    @Column(name = "BB")
     private int baseForBalls;
 
-    @Column(name = "HBP")
     private int hitByPitches;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "AB")
     private int atBat;
 
-    @Column(name = "R")
     private int runs;
 
-    @Column(name = "H")
     private int hits;
 
-    @Column(name = "2B")
     private int doubleHit;
 
-    @Column(name = "3B")
     private int tripleHit;
 
-    @Column(name = "HR")
     private int homeRun;
 
-    @Column(name = "RBI")
     private int runBattedIn;
 
-    @Column(name = "SO")
     private int strikeOut;
 
-    @Column(name = "SB")
     private int stolenBase;
 
-    @Column(name = "CS")
     private int caughtStealing;
 
-    @Column(name = "SF")
     private int sacrificeFlies;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "TB")
     private int totalBases;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "AVG")
     private Double battingAverage;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "OBP")
     private Double onBasePercentage;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "SLG")
     private Double sluggingPercentage;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "OPS")
     private Double onBaseSlugging;
 
-    @OneToOne(mappedBy = "playerHittingDetails",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    private Player player;
+    private int player;
 
-    public PlayerHittingDetails() {
+    public PlayerHittingDetailsDto() {
 
     }
 
@@ -147,6 +101,10 @@ public class PlayerHittingDetails {
 
     public int getAtBat() {
         return atBat;
+    }
+
+    public void setAtBat(int atBat) {
+        this.atBat = atBat;
     }
 
     public int getRuns() {
@@ -233,27 +191,47 @@ public class PlayerHittingDetails {
         return totalBases;
     }
 
+    public void setTotalBases(int totalBases) {
+        this.totalBases = totalBases;
+    }
+
     public Double getBattingAverage() {
         return battingAverage;
+    }
+
+    public void setBattingAverage(Double battingAverage) {
+        this.battingAverage = battingAverage;
     }
 
     public Double getOnBasePercentage() {
         return onBasePercentage;
     }
 
+    public void setOnBasePercentage(Double onBasePercentage) {
+        this.onBasePercentage = onBasePercentage;
+    }
+
     public Double getSluggingPercentage() {
         return sluggingPercentage;
+    }
+
+    public void setSluggingPercentage(Double sluggingPercentage) {
+        this.sluggingPercentage = sluggingPercentage;
     }
 
     public Double getOnBaseSlugging() {
         return onBaseSlugging;
     }
 
-    public Player getPlayer() {
+    public void setOnBaseSlugging(Double onBaseSlugging) {
+        this.onBaseSlugging = onBaseSlugging;
+    }
+
+    public int getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(int player) {
         this.player = player;
     }
 }

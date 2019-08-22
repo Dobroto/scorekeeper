@@ -1,10 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.dto.PlayerDto;
-import com.junak.scorekeeper.entity.GameFieldingDetails;
-import com.junak.scorekeeper.entity.GameHittingDetails;
-import com.junak.scorekeeper.entity.GamePitchingDetails;
-import com.junak.scorekeeper.entity.Player;
+import com.junak.scorekeeper.entity.*;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +88,23 @@ public class PlayerRestController {
         thePlayerDto.setId(0);
 
         Player thePlayer = convertToEntity(thePlayerDto);
+
+        PlayerHittingDetails playerHittingDetails = new PlayerHittingDetails();
+        playerHittingDetails.setPlayer(thePlayer);
+        playerHittingDetailsService.save(playerHittingDetails);
+
+        PlayerPitchingDetails playerPitchingDetails = new PlayerPitchingDetails();
+        playerPitchingDetails.setPlayer(thePlayer);
+        playerPitchingDetailsService.save(playerPitchingDetails);
+
+        PlayerFieldingDetails playerFieldingDetails = new PlayerFieldingDetails();
+        playerFieldingDetails.setPlayer(thePlayer);
+        playerFieldingDetailsService.save(playerFieldingDetails);
+
+        thePlayer.setPlayerHittingDetails(playerHittingDetails);
+        thePlayer.setPlayerPitchingDetails(playerPitchingDetails);
+        thePlayer.setPlayerFieldingDetails(playerFieldingDetails);
+
         playerService.save(thePlayer);
 
         return thePlayer;
@@ -208,6 +222,30 @@ public class PlayerRestController {
         if (player.getTeam() != null) {
             playerDto.setTeam(player.getTeam().getId());
         }
+        if (player.getGameHittingDetails() != null) {
+            List<Integer> gameHittingDetailsDto = new ArrayList<>();
+            List<GameHittingDetails> gameHittingDetailsList = player.getGameHittingDetails();
+            for (GameHittingDetails details : gameHittingDetailsList) {
+                gameHittingDetailsDto.add(details.getId());
+            }
+            playerDto.setGameHittingDetails(gameHittingDetailsDto);
+        }
+        if (player.getGamePitchingDetails() != null) {
+            List<Integer> gamePitchingDetailsDto = new ArrayList<>();
+            List<GamePitchingDetails> gamePitchingDetailsList = player.getGamePitchingDetails();
+            for (GamePitchingDetails details : gamePitchingDetailsList) {
+                gamePitchingDetailsDto.add(details.getId());
+            }
+            playerDto.setGamePitchingDetails(gamePitchingDetailsDto);
+        }
+        if (player.getGameFieldingDetails() != null) {
+            List<Integer> gameFieldingDetailsDto = new ArrayList<>();
+            List<GameFieldingDetails> gameFieldingDetailsList = player.getGameFieldingDetails();
+            for (GameFieldingDetails details : gameFieldingDetailsList) {
+                gameFieldingDetailsDto.add(details.getId());
+            }
+            playerDto.setGameFieldingDetails(gameFieldingDetailsDto);
+        }
 
         return playerDto;
     }
@@ -215,7 +253,7 @@ public class PlayerRestController {
     private Player convertToEntity(PlayerDto playerDto) {
         Player player = new Player();
 
-        if(playerDto.getId() != 0) {
+        if (playerDto.getId() != 0) {
             player = playerService.findById(playerDto.getId());
         }
 
@@ -229,19 +267,9 @@ public class PlayerRestController {
         player.setBallCount(playerDto.getBallCount());
         player.setStrikeCount(playerDto.getStrikeCount());
 
-        if (playerDto.getPlayerHittingDetails() != 0) {
-            player.setPlayerHittingDetails(playerHittingDetailsService.findById(playerDto.getPlayerHittingDetails()));
-        }
-        if (playerDto.getPlayerFieldingDetails() != 0) {
-            player.setPlayerFieldingDetails(playerFieldingDetailsService.findById(playerDto.getPlayerFieldingDetails()));
-        }
-        if (playerDto.getPlayerPitchingDetails() !=0) {
-            player.setPlayerPitchingDetails(playerPitchingDetailsService.findById(playerDto.getPlayerPitchingDetails()));
-        }
         if (playerDto.getTeam() != 0) {
             player.setTeam(teamService.findById(playerDto.getTeam()));
         }
-
         return player;
     }
 }

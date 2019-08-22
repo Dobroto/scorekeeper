@@ -55,4 +55,10 @@ public class GameHittingDetailsServiceImpl implements GameHittingDetailsService 
     public GameHittingDetails getGameHittingDetails(Player player, Game game) {
         return gameHittingDetailsRepository.getGameHittingDetails(player, game);
     }
+
+    @Override
+    public List<GameHittingDetails> getGameHittingDetailsOfPlayer(Player player) {
+        //TODO
+        return null;
+    }
 }

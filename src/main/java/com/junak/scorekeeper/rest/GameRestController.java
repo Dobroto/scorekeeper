@@ -132,8 +132,8 @@ public class GameRestController {
         gameService.save(theGame);
         logger.info("Initiated final result.");
 
-        initializePlayerDetails(homeTeam);
-        initializePlayerDetails(visitorTeam);
+//        initializePlayerDetails(homeTeam);
+//        initializePlayerDetails(visitorTeam);
     }
 
     @PutMapping("/games/{gameId}/play")
@@ -516,50 +516,50 @@ public class GameRestController {
         setNextBatter(batter, theGame);
     }
 
-    private void initializePlayerDetails(Team team) {
-        List<Player> players = team.getPlayers();
-
-        Player[] arrPlayers = new Player[players.size()];
-
-        for (int i = 0; i < players.size(); i++) {
-            arrPlayers[i] = players.get(i);
-        }
-
-        for (Player player : arrPlayers) {
-            if (player.getPlayerHittingDetails() == null) {
-                PlayerHittingDetails hittingDetails = createPlayerHittingDetails(player);
-                player.setPlayerHittingDetails(hittingDetails);
-            }
-            if (player.getPlayerPitchingDetails() == null) {
-                PlayerPitchingDetails pitchingDetails = createPlayerPitchingDetails(player);
-                player.setPlayerPitchingDetails(pitchingDetails);
-            }
-            if (player.getPlayerFieldingDetails() == null) {
-                PlayerFieldingDetails fieldingDetails = createPlayerFieldingDetails(player);
-                player.setPlayerFieldingDetails(fieldingDetails);
-            }
-            playerService.save(player);
-        }
-        logger.info("Initialized player details.");
-    }
-
-    private PlayerHittingDetails createPlayerHittingDetails(Player player) {
-        PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
-        hittingDetails.setPlayer(player);
-        return playerHittingDetailsService.save(hittingDetails);
-    }
-
-    private PlayerPitchingDetails createPlayerPitchingDetails(Player player) {
-        PlayerPitchingDetails pitchingDetails = new PlayerPitchingDetails();
-        pitchingDetails.setPlayer(player);
-        return playerPitchingDetailsService.save(pitchingDetails);
-    }
-
-    private PlayerFieldingDetails createPlayerFieldingDetails(Player player) {
-        PlayerFieldingDetails fieldingDetails = new PlayerFieldingDetails();
-        fieldingDetails.setPlayer(player);
-        return playerFieldingDetailsService.save(fieldingDetails);
-    }
+//    private void initializePlayerDetails(Team team) {
+//        List<Player> players = team.getPlayers();
+//
+//        Player[] arrPlayers = new Player[players.size()];
+//
+//        for (int i = 0; i < players.size(); i++) {
+//            arrPlayers[i] = players.get(i);
+//        }
+//
+//        for (Player player : arrPlayers) {
+//            if (player.getPlayerHittingDetails() == null) {
+//                PlayerHittingDetails hittingDetails = createPlayerHittingDetails(player);
+//                player.setPlayerHittingDetails(hittingDetails);
+//            }
+//            if (player.getPlayerPitchingDetails() == null) {
+//                PlayerPitchingDetails pitchingDetails = createPlayerPitchingDetails(player);
+//                player.setPlayerPitchingDetails(pitchingDetails);
+//            }
+//            if (player.getPlayerFieldingDetails() == null) {
+//                PlayerFieldingDetails fieldingDetails = createPlayerFieldingDetails(player);
+//                player.setPlayerFieldingDetails(fieldingDetails);
+//            }
+//            playerService.save(player);
+//        }
+//        logger.info("Initialized player details.");
+//    }
+//
+//    private PlayerHittingDetails createPlayerHittingDetails(Player player) {
+//        PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
+//        hittingDetails.setPlayer(player);
+//        return playerHittingDetailsService.save(hittingDetails);
+//    }
+//
+//    private PlayerPitchingDetails createPlayerPitchingDetails(Player player) {
+//        PlayerPitchingDetails pitchingDetails = new PlayerPitchingDetails();
+//        pitchingDetails.setPlayer(player);
+//        return playerPitchingDetailsService.save(pitchingDetails);
+//    }
+//
+//    private PlayerFieldingDetails createPlayerFieldingDetails(Player player) {
+//        PlayerFieldingDetails fieldingDetails = new PlayerFieldingDetails();
+//        fieldingDetails.setPlayer(player);
+//        return playerFieldingDetailsService.save(fieldingDetails);
+//    }
 
     private void initializeGameDetails(Team defendingTeam, Team offensiveTeam, Game theGame) {
         Player batter = playerService.getStartingBatter(offensiveTeam);

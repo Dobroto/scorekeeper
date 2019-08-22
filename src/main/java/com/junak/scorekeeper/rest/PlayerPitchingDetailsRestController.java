@@ -1,11 +1,13 @@
 package com.junak.scorekeeper.rest;
 
+import com.junak.scorekeeper.dto.PlayerPitchingDetailsDto;
 import com.junak.scorekeeper.entity.PlayerPitchingDetails;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.interfaces.PlayerPitchingDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,12 +22,17 @@ public class PlayerPitchingDetailsRestController {
     }
 
     @GetMapping("/playerPitchingDetails")
-    public List<PlayerPitchingDetails> findAll() {
-        return playerPitchingDetailsService.findAll();
+    public List<PlayerPitchingDetailsDto> findAll() {
+        List<PlayerPitchingDetails> playerPitchingDetails = playerPitchingDetailsService.findAll();
+        List<PlayerPitchingDetailsDto> dtos = new ArrayList<>();
+        for (PlayerPitchingDetails pitchingDetails : playerPitchingDetails) {
+            dtos.add(convertToDto(pitchingDetails));
+        }
+        return dtos;
     }
 
     @GetMapping("/playerPitchingDetails/{pitchingDetailsId}")
-    public PlayerPitchingDetails getPitchingDetails(@PathVariable int pitchingDetailsId) {
+    public PlayerPitchingDetailsDto getPitchingDetails(@PathVariable int pitchingDetailsId) {
 
         PlayerPitchingDetails thePitchingDetails = playerPitchingDetailsService.findById(pitchingDetailsId);
 
@@ -33,7 +40,7 @@ public class PlayerPitchingDetailsRestController {
             throw new GameNotFoundException("Pitching details id not found - " + pitchingDetailsId);
         }
 
-        return thePitchingDetails;
+        return convertToDto(thePitchingDetails);
     }
 
     @DeleteMapping("/playerPitchingDetails/{pitchingDetailsId}")
@@ -52,5 +59,29 @@ public class PlayerPitchingDetailsRestController {
         playerPitchingDetailsService.deleteById(pitchingDetailsId);
 
         return "Deleted pitching details id - " + pitchingDetailsId;
+    }
+
+    private PlayerPitchingDetailsDto convertToDto(PlayerPitchingDetails playerPitchingDetails) {
+        PlayerPitchingDetailsDto dto = new PlayerPitchingDetailsDto();
+        dto.setId(playerPitchingDetails.getId());
+        dto.setWins(playerPitchingDetails.getWins());
+        dto.setLoses(playerPitchingDetails.getLoses());
+        dto.setEarnedRuns(playerPitchingDetails.getEarnedRuns());
+        dto.setInningsPitched(playerPitchingDetails.getInningsPitched());
+        dto.setEarnedRunAverage(playerPitchingDetails.getEarnedRunAverage());
+        dto.setGames(playerPitchingDetails.getGames());
+        dto.setGamesStarted(playerPitchingDetails.getGamesStarted());
+        dto.setSaves(playerPitchingDetails.getSaves());
+        dto.setSaveOpportunities(playerPitchingDetails.getSaveOpportunities());
+        dto.setHits(playerPitchingDetails.getHits());
+        dto.setRuns(playerPitchingDetails.getRuns());
+        dto.setHomeRuns(playerPitchingDetails.getHomeRuns());
+        dto.setBasesOnBalls(playerPitchingDetails.getBasesOnBalls());
+        dto.setStrikeOuts(playerPitchingDetails.getStrikeOuts());
+        dto.setAverage(playerPitchingDetails.getAverage());
+        dto.setWhips(playerPitchingDetails.getWhips());
+        dto.setPlayer(playerPitchingDetails.getPlayer().getId());
+
+        return dto;
     }
 }

@@ -1,5 +1,7 @@
 package com.junak.scorekeeper.dto;
 
+import java.util.List;
+
 public class PlayerDto {
     private int id;
 
@@ -28,6 +30,12 @@ public class PlayerDto {
     private int playerFieldingDetails;
 
     private int team;
+
+    private List<Integer> gameHittingDetails;
+
+    private List<Integer> gameFieldingDetails;
+
+    private List<Integer> gamePitchingDetails;
 
     public PlayerDto() {
     }
@@ -142,5 +150,29 @@ public class PlayerDto {
 
     public void setTeam(int team) {
         this.team = team;
+    }
+
+    public List<Integer> getGameHittingDetails() {
+        return gameHittingDetails;
+    }
+
+    public void setGameHittingDetails(List<Integer> gameHittingDetails) {
+        this.gameHittingDetails = gameHittingDetails;
+    }
+
+    public List<Integer> getGameFieldingDetails() {
+        return gameFieldingDetails;
+    }
+
+    public void setGameFieldingDetails(List<Integer> gameFieldingDetails) {
+        this.gameFieldingDetails = gameFieldingDetails;
+    }
+
+    public List<Integer> getGamePitchingDetails() {
+        return gamePitchingDetails;
+    }
+
+    public void setGamePitchingDetails(List<Integer> gamePitchingDetails) {
+        this.gamePitchingDetails = gamePitchingDetails;
     }
 }
