@@ -11,7 +11,6 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
 public class Player {
-//    private GameHittingDetailsService gameHittingDetailsService;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

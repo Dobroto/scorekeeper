@@ -267,8 +267,11 @@ public class PlayerRestController {
         player.setBallCount(playerDto.getBallCount());
         player.setStrikeCount(playerDto.getStrikeCount());
 
-        if (playerDto.getTeam() != 0) {
+        if (playerDto.getTeam() > 0) {
             player.setTeam(teamService.findById(playerDto.getTeam()));
+        }
+        if (playerDto.getTeam() == -1) {
+            player.setTeam(null);
         }
         return player;
     }

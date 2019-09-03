@@ -137,7 +137,7 @@ public class TeamRestController {
 
         team.setTeamNameLong(dto.getTeamNameLong());
         team.setTeamNameShort(dto.getTeamNameShort());
-        if (dto.getPlayers().size() != 0) {
+        if ((dto.getPlayers() != null) && (dto.getPlayers().size() != 0)) {
             List<Integer> playerDtos = dto.getPlayers();
             List<Player> players = new ArrayList<>();
             for (Integer playerDto : playerDtos) {
