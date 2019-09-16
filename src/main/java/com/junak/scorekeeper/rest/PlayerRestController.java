@@ -129,70 +129,60 @@ public class PlayerRestController {
         Player tempPlayer = playerService.findById(playerId);
 
         // throw exception if null
-
         if (tempPlayer == null) {
             throw new GameNotFoundException("Player id not found - " + playerId);
         }
 
-        deleteGameHittingDetails(tempPlayer);
-        deleteGamePitchingDetails(tempPlayer);
-        deleteGameFieldingDetails(tempPlayer);
+        List<GameHittingDetails> gameHittingDetailsList =
+                gameHittingDetailsService.getGameHittingDetailsList(tempPlayer);
+        List<GamePitchingDetails> gamePitchingDetailsList =
+                gamePitchingDetailsService.getGamePitchingDetailsList(tempPlayer);
+        List<GameFieldingDetails> gameFieldingDetailsList =
+                gameFieldingDetailsService.getGameFieldingDetailsList(tempPlayer);
+
+        tempPlayer.setGameHittingDetails(null);
+        tempPlayer.setGamePitchingDetails(null);
+        tempPlayer.setGameFieldingDetails(null);
+        playerService.save(tempPlayer);
+
+        deleteGameHittingDetails(gameHittingDetailsList);
+        deleteGamePitchingDetails(gamePitchingDetailsList);
+        deleteGameFieldingDetails(gameFieldingDetailsList);
 
         playerService.deleteById(playerId);
 
         return "Deleted player id - " + playerId;
     }
 
-    private void deleteGameHittingDetails(Player player) {
-        if (player.getGameHittingDetails().size() > 0) {
-            List<GameHittingDetails> gameHittingDetailsList = player.getGameHittingDetails();
-
+    private void deleteGameHittingDetails(List<GameHittingDetails> gameHittingDetailsList) {
+        if ((gameHittingDetailsList != null) && (gameHittingDetailsList.size() > 0)) {
             GameHittingDetails[] detailsToDeleteArr = new GameHittingDetails[gameHittingDetailsList.size()];
 
             for (int i = 0; i < detailsToDeleteArr.length; i++) {
-
                 GameHittingDetails detailsToDelete = gameHittingDetailsList.get(i);
-                detailsToDelete.setPlayer(null);
-                detailsToDelete.setGame(null);
-                gameHittingDetailsService.save(detailsToDelete);
-                //TODO Can't delete details
-//                gameHittingDetailsService.deleteById(detailsToDelete.getId());
+                gameHittingDetailsService.deleteById(detailsToDelete.getId());
             }
         }
     }
 
-    private void deleteGamePitchingDetails(Player player) {
-        if (player.getGamePitchingDetails().size() > 0) {
-            List<GamePitchingDetails> gamePitchingDetailsList = player.getGamePitchingDetails();
-
+    private void deleteGamePitchingDetails(List<GamePitchingDetails> gamePitchingDetailsList) {
+        if ((gamePitchingDetailsList != null) && (gamePitchingDetailsList.size() > 0)) {
             GamePitchingDetails[] detailsToDeleteArr = new GamePitchingDetails[gamePitchingDetailsList.size()];
 
             for (int i = 0; i < detailsToDeleteArr.length; i++) {
-
                 GamePitchingDetails detailsToDelete = gamePitchingDetailsList.get(i);
-                detailsToDelete.setPlayer(null);
-                detailsToDelete.setGame(null);
-                gamePitchingDetailsService.save(detailsToDelete);
-                //TODO Can't delete details
-//                gamePitchingDetailsService.deleteById(detailsToDelete.getId());
+                gamePitchingDetailsService.deleteById(detailsToDelete.getId());
             }
         }
     }
 
-    private void deleteGameFieldingDetails(Player player) {
-        if (player.getGameFieldingDetails().size() > 0) {
-            List<GameFieldingDetails> gameFieldingDetailsList = player.getGameFieldingDetails();
-
+    private void deleteGameFieldingDetails(List<GameFieldingDetails> gameFieldingDetailsList) {
+        if ((gameFieldingDetailsList != null) && (gameFieldingDetailsList.size() > 0)) {
             GameFieldingDetails[] detailsToDeleteArr = new GameFieldingDetails[gameFieldingDetailsList.size()];
 
             for (int i = 0; i < detailsToDeleteArr.length; i++) {
-
                 GameFieldingDetails detailsToDelete = gameFieldingDetailsList.get(i);
-                detailsToDelete.setPlayer(null);
-                detailsToDelete.setGame(null);
-                gameFieldingDetailsService.save(detailsToDelete);
-                //TODO Can't delete details
-//                gameFieldingDetailsService.deleteById(detailsToDelete.getId());
+                gameFieldingDetailsService.deleteById(detailsToDelete.getId());
             }
         }
     }
@@ -222,7 +212,7 @@ public class PlayerRestController {
         if (player.getTeam() != null) {
             playerDto.setTeam(player.getTeam().getId());
         }
-        if (player.getGameHittingDetails() != null) {
+        if ((player.getGameHittingDetails() != null) && (player.getGameHittingDetails().size() != 0)) {
             List<Integer> gameHittingDetailsDto = new ArrayList<>();
             List<GameHittingDetails> gameHittingDetailsList = player.getGameHittingDetails();
             for (GameHittingDetails details : gameHittingDetailsList) {
@@ -230,7 +220,7 @@ public class PlayerRestController {
             }
             playerDto.setGameHittingDetails(gameHittingDetailsDto);
         }
-        if (player.getGamePitchingDetails() != null) {
+        if ((player.getGamePitchingDetails() != null) && (player.getGamePitchingDetails().size() != 0)) {
             List<Integer> gamePitchingDetailsDto = new ArrayList<>();
             List<GamePitchingDetails> gamePitchingDetailsList = player.getGamePitchingDetails();
             for (GamePitchingDetails details : gamePitchingDetailsList) {
@@ -238,7 +228,7 @@ public class PlayerRestController {
             }
             playerDto.setGamePitchingDetails(gamePitchingDetailsDto);
         }
-        if (player.getGameFieldingDetails() != null) {
+        if ((player.getGameFieldingDetails() != null) && (player.getGameFieldingDetails().size() != 0)) {
             List<Integer> gameFieldingDetailsDto = new ArrayList<>();
             List<GameFieldingDetails> gameFieldingDetailsList = player.getGameFieldingDetails();
             for (GameFieldingDetails details : gameFieldingDetailsList) {

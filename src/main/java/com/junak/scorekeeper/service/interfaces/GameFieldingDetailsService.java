@@ -16,4 +16,8 @@ public interface GameFieldingDetailsService {
     void deleteById(int id);
 
     GameFieldingDetails getGameFieldingDetails(Player fielder, Game game);
+
+    List<GameFieldingDetails> getGameFieldingDetailsList(Game game);
+
+    List<GameFieldingDetails> getGameFieldingDetailsList(Player player);
 }

@@ -1,101 +1,53 @@
-package com.junak.scorekeeper.entity;
+package com.junak.scorekeeper.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "game_hitting_details")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
-public class GameHittingDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class GameHittingDetailsDto {
     private int id;
 
-    @Column(name = "PA")
     private int plateAppearances;
 
-    @Column(name = "SH")
     private int sacrificeHits;
 
-    @Column(name = "BB")
     private int baseForBalls;
 
-    @Column(name = "HBP")
     private int hitByPitches;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "AB")
     private int atBat;
 
-    @Column(name = "R")
     private int runs;
 
-    @Column(name = "H")
     private int hits;
 
-    @Column(name = "2B")
     private int doubleHit;
 
-    @Column(name = "3B")
     private int tripleHit;
 
-    @Column(name = "HR")
     private int homeRun;
 
-    @Column(name = "RBI")
     private int runBattedIn;
 
-    @Column(name = "SO")
     private int strikeOut;
 
-    @Column(name = "SB")
     private int stolenBase;
 
-    @Column(name = "CS")
     private int caughtStealing;
 
-    @Column(name = "SF")
     private int sacrificeFlies;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "TB")
     private int totalBases;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "AVG")
-    private Double battingAverage;
+    private double battingAverage;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "OBP")
-    private Double onBasePercentage;
+    private double onBasePercentage;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "SLG")
-    private Double sluggingPercentage;
+    private double sluggingPercentage;
 
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "OPS")
-    private Double onBaseSlugging;
+    private double onBaseSlugging;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "player_id")
-    private Player player;
+    private int player;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "game_id")
-    private Game game;
+    private int game;
 
-    public GameHittingDetails() {
+    public GameHittingDetailsDto() {
 
     }
 
@@ -141,6 +93,10 @@ public class GameHittingDetails {
 
     public int getAtBat() {
         return atBat;
+    }
+
+    public void setAtBat(int atBat) {
+        this.atBat = atBat;
     }
 
     public int getRuns() {
@@ -227,35 +183,55 @@ public class GameHittingDetails {
         return totalBases;
     }
 
-    public Double getBattingAverage() {
+    public void setTotalBases(int totalBases) {
+        this.totalBases = totalBases;
+    }
+
+    public double getBattingAverage() {
         return battingAverage;
     }
 
-    public Double getOnBasePercentage() {
+    public void setBattingAverage(double battingAverage) {
+        this.battingAverage = battingAverage;
+    }
+
+    public double getOnBasePercentage() {
         return onBasePercentage;
     }
 
-    public Double getSluggingPercentage() {
+    public void setOnBasePercentage(double onBasePercentage) {
+        this.onBasePercentage = onBasePercentage;
+    }
+
+    public double getSluggingPercentage() {
         return sluggingPercentage;
     }
 
-    public Double getOnBaseSlugging() {
+    public void setSluggingPercentage(double sluggingPercentage) {
+        this.sluggingPercentage = sluggingPercentage;
+    }
+
+    public double getOnBaseSlugging() {
         return onBaseSlugging;
     }
 
-    public Player getPlayer() {
+    public void setOnBaseSlugging(double onBaseSlugging) {
+        this.onBaseSlugging = onBaseSlugging;
+    }
+
+    public int getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(int player) {
         this.player = player;
     }
 
-    public Game getGame() {
+    public int getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(int game) {
         this.game = game;
     }
 }

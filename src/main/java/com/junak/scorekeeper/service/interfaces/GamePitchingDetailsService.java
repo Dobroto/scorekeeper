@@ -16,4 +16,8 @@ public interface GamePitchingDetailsService {
     void deleteById(int id);
 
     GamePitchingDetails getGamePitchingDetails(Player pitcher, Game game);
+
+    List<GamePitchingDetails> getGamePitchingDetailsList(Game game);
+
+    List<GamePitchingDetails> getGamePitchingDetailsList(Player player);
 }

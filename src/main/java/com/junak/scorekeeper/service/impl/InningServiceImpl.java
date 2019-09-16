@@ -54,4 +54,9 @@ public class InningServiceImpl implements InningService {
     public Inning getCurrentInning(Game game) {
         return inningRepository.getCurrentInning(game);
     }
+
+    @Override
+    public List<Inning> getInningsList(Game game) {
+        return inningRepository.getInningsList(game);
+    }
 }

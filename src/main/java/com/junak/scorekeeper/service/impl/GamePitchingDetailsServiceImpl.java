@@ -55,4 +55,14 @@ public class GamePitchingDetailsServiceImpl implements GamePitchingDetailsServic
     public GamePitchingDetails getGamePitchingDetails(Player pitcher, Game game) {
         return gamePitchingDetailsRepository.getGamePitchingDetails(pitcher, game);
     }
+
+    @Override
+    public List<GamePitchingDetails> getGamePitchingDetailsList(Game game) {
+        return gamePitchingDetailsRepository.getGamePitchingDetailsList(game);
+    }
+
+    @Override
+    public List<GamePitchingDetails> getGamePitchingDetailsList(Player player) {
+        return gamePitchingDetailsRepository.getGamePitchingDetailsList(player);
+    }
 }

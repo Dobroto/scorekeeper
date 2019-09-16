@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.List;
 
 @Repository
 public class GamePitchingDetailsRepositoryCustomImpl implements GamePitchingDetailsRepositoryCustom {
@@ -37,6 +38,38 @@ public class GamePitchingDetailsRepositoryCustomImpl implements GamePitchingDeta
             return theQuery.getSingleResult();
         } catch (NoResultException ex) {
             logger.info("There is no game pitching details of player with id {} and game with id {}.", playerId, gameId);
+            return null;
+        }
+    }
+
+    @Override
+    public List<GamePitchingDetails> getGamePitchingDetailsList(Game game) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        int gameId = game.getId();
+        Query<GamePitchingDetails> theQuery =
+                currentSession.createQuery("from GamePitchingDetails where game_id=:gameId");
+        theQuery.setParameter("gameId", gameId);
+        try {
+            return theQuery.getResultList();
+        } catch (NoResultException ex) {
+            logger.info("There is no game pitching details of game with id {}.", gameId);
+            return null;
+        }
+    }
+
+    @Override
+    public List<GamePitchingDetails> getGamePitchingDetailsList(Player player) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        int playerId = player.getId();
+        Query<GamePitchingDetails> theQuery =
+                currentSession.createQuery("from GamePitchingDetails where player_id=:playerId");
+        theQuery.setParameter("playerId", playerId);
+        try {
+            return theQuery.getResultList();
+        } catch (NoResultException ex) {
+            logger.info("There is no game pitching details of player with id {}.", playerId);
             return null;
         }
     }

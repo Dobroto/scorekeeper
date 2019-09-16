@@ -19,6 +19,10 @@ public class Game {
     @Column(name = "id")
     private int id;
 
+    @Column(name = "scheduled_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date scheduledTime;
+
     @Column(name = "start_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startTimeOfGame;
@@ -99,6 +103,14 @@ public class Game {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Date getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(Date scheduledTime) {
+        this.scheduledTime = scheduledTime;
     }
 
     public Date getStartTimeOfGame() {

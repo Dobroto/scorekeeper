@@ -45,4 +45,22 @@ public class InningRepositoryCustomImpl implements InningRepositoryCustom {
             return null;
         }
     }
+
+    @Override
+    public List<Inning> getInningsList(Game game) {
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        int gameId = game.getId();
+        Query<Inning> theQuery =
+                currentSession.createQuery
+                        ("from Inning where game_id=:gameId");
+        theQuery.setParameter("gameId", gameId);
+
+        try {
+            return theQuery.getResultList();
+        } catch (NoResultException ex) {
+            logger.info("There is no inning for this game.");
+            return null;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.junak.scorekeeper.rest;
 
 import com.junak.scorekeeper.Constants;
+import com.junak.scorekeeper.dto.GameDto;
 import com.junak.scorekeeper.entity.*;
 import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.*;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,12 +57,17 @@ public class GameRestController {
     }
 
     @GetMapping("/games")
-    public List<Game> findAll() {
-        return gameService.findAll();
+    public List<GameDto> findAll() {
+        List<Game> games = gameService.findAll();
+        List<GameDto> gameDtos = new ArrayList<>();
+        for (Game game : games) {
+            gameDtos.add(convertToDto(game));
+        }
+        return gameDtos;
     }
 
     @GetMapping("/games/{gameId}")
-    public Game getGame(@PathVariable int gameId) {
+    public GameDto getGame(@PathVariable int gameId) {
 
         Game theGame = gameService.findById(gameId);
 
@@ -68,25 +75,26 @@ public class GameRestController {
             throw new GameNotFoundException("Game id not found - " + gameId);
         }
 
-        return theGame;
+        return convertToDto(theGame);
     }
 
     @PostMapping("/games")
-    public Game addGame(@RequestBody Game theGame) {
+    public Game addGame(@RequestBody GameDto gameDto) {
 
         // also just in case they pass an id in JSON ... set id to 0
         // this is to force a save of new item ... instead of update
 
-        theGame.setId(0);
+        gameDto.setId(0);
 
-        gameService.save(theGame);
+        Game theGame = gameService.save(convertToEntity(gameDto));
 
         return theGame;
     }
 
     @PutMapping("/games")
-    public Game updateGame(@RequestBody Game theGame) {
+    public Game updateGame(@RequestBody GameDto gameDto) {
 
+        Game theGame = convertToEntity(gameDto);
         gameService.save(theGame);
 
         return theGame;
@@ -94,13 +102,65 @@ public class GameRestController {
 
     @DeleteMapping("/games/{gameId}")
     public String deleteGame(@PathVariable int gameId) {
-
         Game tempGame = gameService.findById(gameId);
 
         // throw exception if null
-
         if (tempGame == null) {
             throw new GameNotFoundException("Game id not found - " + gameId);
+        }
+
+        List<GameHittingDetails> gameHittingDetailsList =
+                gameHittingDetailsService.getGameHittingDetailsList(tempGame);
+        List<GamePitchingDetails> gamePitchingDetailsList =
+                gamePitchingDetailsService.getGamePitchingDetailsList(tempGame);
+        List<GameFieldingDetails> gameFieldingDetailsList =
+                gameFieldingDetailsService.getGameFieldingDetailsList(tempGame);
+        List<Inning> inningList = inningService.getInningsList(tempGame);
+
+        tempGame.setGameHittingDetails(null);
+        tempGame.setGamePitchingDetails(null);
+        tempGame.setGameFieldingDetails(null);
+        tempGame.setInnings(null);
+        gameService.save(tempGame);
+
+        if ((gameHittingDetailsList != null) && (gameHittingDetailsList.size() > 0)) {
+            GameHittingDetails[] hittingDetailsToDeleteArr = new GameHittingDetails[gameHittingDetailsList.size()];
+
+            for (int i = 0; i < hittingDetailsToDeleteArr.length; i++) {
+                GameHittingDetails hittingDetailsToDelete = gameHittingDetailsList.get(i);
+                gameHittingDetailsService.deleteById(hittingDetailsToDelete.getId());
+            }
+        }
+
+        if ((gamePitchingDetailsList != null) && (gamePitchingDetailsList.size() > 0)) {
+            GamePitchingDetails[] pitchingDetailsToDeleteArr = new GamePitchingDetails[gamePitchingDetailsList.size()];
+
+            for (int i = 0; i < pitchingDetailsToDeleteArr.length; i++) {
+                GamePitchingDetails pitchingDetailsToDelete = gamePitchingDetailsList.get(i);
+                gamePitchingDetailsService.deleteById(pitchingDetailsToDelete.getId());
+            }
+        }
+
+        if ((gameFieldingDetailsList != null) && (gameFieldingDetailsList.size() > 0)) {
+            GameFieldingDetails[] fieldingDetailsToUpdateArr = new GameFieldingDetails[gameFieldingDetailsList.size()];
+
+            for (int i = 0; i < fieldingDetailsToUpdateArr.length; i++) {
+                GameFieldingDetails fieldingDetailsToUpdate = gameFieldingDetailsList.get(i);
+                gameFieldingDetailsService.deleteById(fieldingDetailsToUpdate.getId());
+            }
+        }
+
+        if ((inningList != null) && (inningList.size() > 0)) {
+            Inning[] inningsToDeleteArr = new Inning[inningList.size()];
+
+            for (int i = 0; i < inningsToDeleteArr.length; i++) {
+                Inning inningToDelete = inningList.get(i);
+                inningService.deleteById(inningToDelete.getId());
+            }
+        }
+
+        if (tempGame.getFinalResult() != null) {
+            finalResultService.deleteById(tempGame.getFinalResult().getId());
         }
 
         gameService.deleteById(gameId);
@@ -131,9 +191,6 @@ public class GameRestController {
         theGame.setFinalResult(finalResult);
         gameService.save(theGame);
         logger.info("Initiated final result.");
-
-//        initializePlayerDetails(homeTeam);
-//        initializePlayerDetails(visitorTeam);
     }
 
     @PutMapping("/games/{gameId}/play")
@@ -391,6 +448,9 @@ public class GameRestController {
         //increase hits allowed by pitcher
         increaseHitsAllowedByPitcher(pitcher, theGame);
 
+        //increase hits of team
+        increaseHitsOfTeam(theGame, batter);
+
         batter.setOffencePosition(Constants.runnerFirstBase);
         playerService.save(batter);
         logger.info("Batter with id {} moved to first base.", batterId);
@@ -419,6 +479,9 @@ public class GameRestController {
         //increase hits allowed by pitcher
         increaseHitsAllowedByPitcher(pitcher, theGame);
 
+        //increase hits of team
+        increaseHitsOfTeam(theGame, batter);
+
         batter.setOffencePosition(Constants.runnerSecondBase);
         playerService.save(batter);
         logger.info("Batter with id {} moved to second base.", batterId);
@@ -446,6 +509,9 @@ public class GameRestController {
 
         //increase hits allowed by pitcher
         increaseHitsAllowedByPitcher(pitcher, theGame);
+
+        //increase hits of team
+        increaseHitsOfTeam(theGame, batter);
 
         batter.setOffencePosition(Constants.runnerThirdBase);
         playerService.save(batter);
@@ -486,6 +552,9 @@ public class GameRestController {
         gamePitchingDetailsService.save(gamePitchingDetails);
         logger.info("Game Pitching Details: Increase home runs allowed by pitcher with id {} in game with id {}",
                 pitcherId, gameId);
+
+        //increase hits of team
+        increaseHitsOfTeam(theGame, batter);
 
         scoreARun(batter, batter, pitcher, theGame, true, true);
 
@@ -560,6 +629,15 @@ public class GameRestController {
 //        fieldingDetails.setPlayer(player);
 //        return playerFieldingDetailsService.save(fieldingDetails);
 //    }
+
+    private void increaseHitsOfTeam(Game game, Player batter) {
+        FinalResult finalResult = game.getFinalResult();
+        if (game.getHomeTeam().getId() == batter.getTeam().getId()) {
+            finalResult.setHomeTeamHits(finalResult.getHomeTeamHits() + 1);
+        } else {
+            finalResult.setVisitorTeamHits(finalResult.getVisitorTeamHits() + 1);
+        }
+    }
 
     private void initializeGameDetails(Team defendingTeam, Team offensiveTeam, Game theGame) {
         Player batter = playerService.getStartingBatter(offensiveTeam);
@@ -947,4 +1025,113 @@ public class GameRestController {
         gamePitchingDetailsService.save(gamePitchingDetails);
     }
 
+    private GameDto convertToDto(Game game) {
+        GameDto gameDto = new GameDto();
+        gameDto.setId(game.getId());
+        gameDto.setScheduledTime(game.getScheduledTime());
+        gameDto.setStartTimeOfGame(game.getStartTimeOfGame());
+        gameDto.setEndTimeOfGame(game.getEndTimeOfGame());
+        if (game.getHomeTeam() != null) {
+            gameDto.setHomeTeam(game.getHomeTeam().getId());
+        }
+        if (game.getVisitorTeam() != null) {
+            gameDto.setVisitorTeam(game.getVisitorTeam().getId());
+        }
+        if (game.getFinalResult() != null) {
+            gameDto.setFinalResult(game.getFinalResult().getId());
+        }
+        if ((game.getGameHittingDetails() != null) && (game.getGameHittingDetails().size() != 0)) {
+            List<Integer> gameHittingDetailsDto = new ArrayList<>();
+            List<GameHittingDetails> gameHittingDetailsList = game.getGameHittingDetails();
+            for (GameHittingDetails details : gameHittingDetailsList) {
+                gameHittingDetailsDto.add(details.getId());
+            }
+            gameDto.setGameHittingDetails(gameHittingDetailsDto);
+        }
+        if ((game.getGamePitchingDetails() != null) && (game.getGamePitchingDetails().size() != 0)) {
+            List<Integer> gamePitchingDetailsDto = new ArrayList<>();
+            List<GamePitchingDetails> gamePitchingDetailsList = game.getGamePitchingDetails();
+            for (GamePitchingDetails details : gamePitchingDetailsList) {
+                gamePitchingDetailsDto.add(details.getId());
+            }
+            gameDto.setGamePitchingDetails(gamePitchingDetailsDto);
+        }
+        if ((game.getGameFieldingDetails() != null) && (game.getGameFieldingDetails().size() != 0)) {
+            List<Integer> gameFieldingDetailsDto = new ArrayList<>();
+            List<GameFieldingDetails> gameFieldingDetailsList = game.getGameFieldingDetails();
+            for (GameFieldingDetails details : gameFieldingDetailsList) {
+                gameFieldingDetailsDto.add(details.getId());
+            }
+            gameDto.setGameFieldingDetails(gameFieldingDetailsDto);
+        }
+        if (game.getWinPitcher() != null) {
+            gameDto.setWinPitcher(game.getWinPitcher().getId());
+        }
+        if (game.getLosePitcher() != null) {
+            gameDto.setLosePitcher(game.getLosePitcher().getId());
+        }
+        if (game.getSavePitcher() != null) {
+            gameDto.setSavePitcher(game.getSavePitcher().getId());
+        }
+        if (game.getBlownSavePitcher() != null) {
+            gameDto.setBlownSavePitcher(game.getBlownSavePitcher().getId());
+        }
+        if (game.getHoldPitcher() != null) {
+            gameDto.setHoldPitcher(game.getHoldPitcher().getId());
+        }
+        if ((game.getInnings() != null) && (game.getInnings().size() != 0)) {
+            List<Integer> inningsDto = new ArrayList<>();
+            List<Inning> inningList = game.getInnings();
+            for (Inning innings : inningList) {
+                inningsDto.add(innings.getId());
+            }
+            gameDto.setInnings(inningsDto);
+        }
+        return gameDto;
+    }
+
+    private Game convertToEntity(GameDto gameDto) {
+        Game game = new Game();
+
+        if (gameDto.getId() != 0) {
+            game = gameService.findById(gameDto.getId());
+        }
+
+        game.setScheduledTime(gameDto.getScheduledTime());
+        game.setStartTimeOfGame(gameDto.getStartTimeOfGame());
+        game.setEndTimeOfGame(gameDto.getEndTimeOfGame());
+        if (gameDto.getHomeTeam() != 0) {
+            game.setHomeTeam(teamService.findById(gameDto.getHomeTeam()));
+        }
+        if (gameDto.getVisitorTeam() != 0) {
+            game.setVisitorTeam(teamService.findById(gameDto.getVisitorTeam()));
+        }
+        if (gameDto.getFinalResult() != 0) {
+            game.setFinalResult(finalResultService.findById(gameDto.getFinalResult()));
+        }
+        if (gameDto.getWinPitcher() != 0) {
+            game.setWinPitcher(playerService.findById(gameDto.getWinPitcher()));
+        }
+        if (gameDto.getLosePitcher() != 0) {
+            game.setLosePitcher(playerService.findById(gameDto.getLosePitcher()));
+        }
+        if (gameDto.getSavePitcher() != 0) {
+            game.setSavePitcher(playerService.findById(gameDto.getSavePitcher()));
+        }
+        if (gameDto.getBlownSavePitcher() != 0) {
+            game.setBlownSavePitcher(playerService.findById(gameDto.getBlownSavePitcher()));
+        }
+        if (gameDto.getHoldPitcher() != 0) {
+            game.setHoldPitcher(playerService.findById(gameDto.getHoldPitcher()));
+        }
+        if ((gameDto.getInnings() != null) && (gameDto.getInnings().size() != 0)) {
+            List<Integer> inningsDto = gameDto.getInnings();
+            List<Inning> inningList = new ArrayList<>();
+            for (Integer innings : inningsDto) {
+                inningList.add(inningService.findById(innings));
+            }
+            game.setInnings(inningList);
+        }
+        return game;
+    }
 }

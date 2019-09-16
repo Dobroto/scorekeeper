@@ -1,46 +1,23 @@
-package com.junak.scorekeeper.entity;
+package com.junak.scorekeeper.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "final_result")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
-public class FinalResult {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class FinalResultDto {
     private int id;
 
-    @Column(name = "visitor_team_score")
     private int visitorTeamScore;
 
-    @Column(name = "home_team_score")
     private int homeTeamScore;
 
-    @Column(name = "visitor_team_hits")
     private int visitorTeamHits;
 
-    @Column(name = "home_team_hits")
     private int homeTeamHits;
 
-    @Column(name = "visitor_team_errors")
     private int visitorTeamErrors;
 
-    @Column(name = "home_team_errors")
     private int homeTeamErrors;
 
-    @OneToOne(mappedBy = "finalResult",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    private Game game;
+    private int game;
 
-    public FinalResult() {
+    public FinalResultDto() {
 
     }
 
@@ -100,11 +77,11 @@ public class FinalResult {
         this.homeTeamErrors = homeTeamErrors;
     }
 
-    public Game getGame() {
+    public int getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(int game) {
         this.game = game;
     }
 }

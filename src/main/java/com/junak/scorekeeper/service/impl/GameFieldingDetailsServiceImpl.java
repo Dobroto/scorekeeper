@@ -55,4 +55,14 @@ public class GameFieldingDetailsServiceImpl implements GameFieldingDetailsServic
     public GameFieldingDetails getGameFieldingDetails(Player fielder, Game game) {
         return gameFieldingDetailsRepository.getGameFieldingDetails(fielder, game);
     }
+
+    @Override
+    public List<GameFieldingDetails> getGameFieldingDetailsList(Game game) {
+        return gameFieldingDetailsRepository.getGameFieldingDetailsList(game);
+    }
+
+    @Override
+    public List<GameFieldingDetails> getGameFieldingDetailsList(Player player) {
+        return gameFieldingDetailsRepository.getGameFieldingDetailsList(player);
+    }
 }

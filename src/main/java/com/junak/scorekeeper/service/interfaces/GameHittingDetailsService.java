@@ -17,5 +17,7 @@ public interface GameHittingDetailsService {
 
     GameHittingDetails getGameHittingDetails(Player player, Game game);
 
-    List<GameHittingDetails> getGameHittingDetailsOfPlayer(Player player);
+    List<GameHittingDetails> getGameHittingDetailsList(Game game);
+
+    List<GameHittingDetails> getGameHittingDetailsList(Player player);
 }

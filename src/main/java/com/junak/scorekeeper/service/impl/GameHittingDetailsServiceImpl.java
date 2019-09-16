@@ -57,8 +57,12 @@ public class GameHittingDetailsServiceImpl implements GameHittingDetailsService 
     }
 
     @Override
-    public List<GameHittingDetails> getGameHittingDetailsOfPlayer(Player player) {
-        //TODO
-        return null;
+    public List<GameHittingDetails> getGameHittingDetailsList(Game game) {
+        return gameHittingDetailsRepository.getGameHittingDetailsList(game);
+    }
+
+    @Override
+    public List<GameHittingDetails> getGameHittingDetailsList(Player player) {
+        return gameHittingDetailsRepository.getGameHittingDetailsList(player);
     }
 }

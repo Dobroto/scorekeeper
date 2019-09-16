@@ -98,7 +98,7 @@ public class TeamRestController {
         dto.setTeamNameLong(team.getTeamNameLong());
         dto.setTeamNameShort(team.getTeamNameShort());
 
-        if ((team.getPlayers() != null) || (team.getPlayers().size() != 0)) {
+        if ((team.getPlayers() != null) && (team.getPlayers().size() != 0)) {
             List<Integer> playerDtos = new ArrayList<>();
             List<Player> players = team.getPlayers();
             for (Player player : players) {
@@ -107,7 +107,7 @@ public class TeamRestController {
             dto.setPlayers(playerDtos);
         }
 
-        if ((team.getHomeGames() != null) || (team.getHomeGames().size() != 0)) {
+        if ((team.getHomeGames() != null) && (team.getHomeGames().size() != 0)) {
             List<Integer> homeGameDtos = new ArrayList<>();
             List<Game> homeGames = team.getHomeGames();
             for (Game homeGame : homeGames) {
@@ -116,7 +116,7 @@ public class TeamRestController {
             dto.setHomeGames(homeGameDtos);
         }
 
-        if ((team.getVisitorGames() != null) || (team.getVisitorGames().size() != 0)) {
+        if ((team.getVisitorGames() != null) && (team.getVisitorGames().size() != 0)) {
             List<Integer> visitorGameDtos = new ArrayList<>();
             List<Game> visitorGames = team.getVisitorGames();
             for (Game visitorGame : visitorGames) {
