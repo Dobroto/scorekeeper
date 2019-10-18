@@ -213,6 +213,7 @@ public class GameRestController {
         Date currentDate = new Date();
         theGame.setEndTimeOfGame(currentDate);
         gameService.save(theGame);
+        //TODO reset players offence positions, ball count, strike count, was pitcher
     }
 
     @PutMapping("/games/{gameId}/undo")
@@ -585,51 +586,6 @@ public class GameRestController {
         setNextBatter(batter, theGame);
     }
 
-//    private void initializePlayerDetails(Team team) {
-//        List<Player> players = team.getPlayers();
-//
-//        Player[] arrPlayers = new Player[players.size()];
-//
-//        for (int i = 0; i < players.size(); i++) {
-//            arrPlayers[i] = players.get(i);
-//        }
-//
-//        for (Player player : arrPlayers) {
-//            if (player.getPlayerHittingDetails() == null) {
-//                PlayerHittingDetails hittingDetails = createPlayerHittingDetails(player);
-//                player.setPlayerHittingDetails(hittingDetails);
-//            }
-//            if (player.getPlayerPitchingDetails() == null) {
-//                PlayerPitchingDetails pitchingDetails = createPlayerPitchingDetails(player);
-//                player.setPlayerPitchingDetails(pitchingDetails);
-//            }
-//            if (player.getPlayerFieldingDetails() == null) {
-//                PlayerFieldingDetails fieldingDetails = createPlayerFieldingDetails(player);
-//                player.setPlayerFieldingDetails(fieldingDetails);
-//            }
-//            playerService.save(player);
-//        }
-//        logger.info("Initialized player details.");
-//    }
-//
-//    private PlayerHittingDetails createPlayerHittingDetails(Player player) {
-//        PlayerHittingDetails hittingDetails = new PlayerHittingDetails();
-//        hittingDetails.setPlayer(player);
-//        return playerHittingDetailsService.save(hittingDetails);
-//    }
-//
-//    private PlayerPitchingDetails createPlayerPitchingDetails(Player player) {
-//        PlayerPitchingDetails pitchingDetails = new PlayerPitchingDetails();
-//        pitchingDetails.setPlayer(player);
-//        return playerPitchingDetailsService.save(pitchingDetails);
-//    }
-//
-//    private PlayerFieldingDetails createPlayerFieldingDetails(Player player) {
-//        PlayerFieldingDetails fieldingDetails = new PlayerFieldingDetails();
-//        fieldingDetails.setPlayer(player);
-//        return playerFieldingDetailsService.save(fieldingDetails);
-//    }
-
     private void increaseHitsOfTeam(Game game, Player batter) {
         FinalResult finalResult = game.getFinalResult();
         if (game.getHomeTeam().getId() == batter.getTeam().getId()) {
@@ -684,6 +640,9 @@ public class GameRestController {
             gamePitchingDetailsService.save(gamePitchingDetails);
             logger.info("Created game pitching details of pitcher with id {}", pitcher.getId());
         }
+
+        pitcher.setWasPitcher(true);
+        playerService.save(pitcher);
 
         //record the "game" and "game started" statistics
         PlayerPitchingDetails playerPitchingDetails = pitcher.getPlayerPitchingDetails();

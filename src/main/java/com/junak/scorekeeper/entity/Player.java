@@ -45,6 +45,9 @@ public class Player {
     @Column(name = "strike_count")
     private int strikeCount;
 
+    @Column(name = "was_pitcher")
+    private boolean wasPitcher;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "player_hitting_details_id")
     private PlayerHittingDetails playerHittingDetails;
@@ -182,6 +185,14 @@ public class Player {
 
     public void setStrikeCount(int strikeCount) {
         this.strikeCount = strikeCount;
+    }
+
+    public boolean isWasPitcher() {
+        return wasPitcher;
+    }
+
+    public void setWasPitcher(boolean wasPitcher) {
+        this.wasPitcher = wasPitcher;
     }
 
     public String getOffencePosition() {

@@ -199,6 +199,7 @@ public class PlayerRestController {
         playerDto.setBattingOrder(player.getBattingOrder());
         playerDto.setBallCount(player.getBallCount());
         playerDto.setStrikeCount(player.getStrikeCount());
+        playerDto.setWasPitcher(player.isWasPitcher());
 
         if (player.getPlayerHittingDetails() != null) {
             playerDto.setPlayerHittingDetails(player.getPlayerHittingDetails().getId());
@@ -256,6 +257,7 @@ public class PlayerRestController {
         player.setBattingOrder(playerDto.getBattingOrder());
         player.setBallCount(playerDto.getBallCount());
         player.setStrikeCount(playerDto.getStrikeCount());
+        player.setWasPitcher(playerDto.isWasPitcher());
 
         if (playerDto.getTeam() > 0) {
             player.setTeam(teamService.findById(playerDto.getTeam()));

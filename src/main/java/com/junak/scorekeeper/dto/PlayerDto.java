@@ -23,6 +23,8 @@ public class PlayerDto {
 
     private int strikeCount;
 
+    private boolean wasPitcher;
+
     private int playerHittingDetails;
 
     private int playerPitchingDetails;
@@ -120,6 +122,14 @@ public class PlayerDto {
         this.strikeCount = strikeCount;
     }
 
+    public boolean isWasPitcher() {
+        return wasPitcher;
+    }
+
+    public void setWasPitcher(boolean wasPitcher) {
+        this.wasPitcher = wasPitcher;
+    }
+
     public int getPlayerHittingDetails() {
         return playerHittingDetails;
     }
@@ -174,5 +184,29 @@ public class PlayerDto {
 
     public void setGamePitchingDetails(List<Integer> gamePitchingDetails) {
         this.gamePitchingDetails = gamePitchingDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerDto{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", jerseyNumber=" + jerseyNumber +
+                ", starter=" + starter +
+                ", defencePosition='" + defencePosition + '\'' +
+                ", offencePosition='" + offencePosition + '\'' +
+                ", battingOrder=" + battingOrder +
+                ", ballCount=" + ballCount +
+                ", strikeCount=" + strikeCount +
+                ", wasPitcher=" + wasPitcher +
+                ", playerHittingDetails=" + playerHittingDetails +
+                ", playerPitchingDetails=" + playerPitchingDetails +
+                ", playerFieldingDetails=" + playerFieldingDetails +
+                ", team=" + team +
+                ", gameHittingDetails=" + gameHittingDetails +
+                ", gameFieldingDetails=" + gameFieldingDetails +
+                ", gamePitchingDetails=" + gamePitchingDetails +
+                '}';
     }
 }
