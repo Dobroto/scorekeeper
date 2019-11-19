@@ -25,6 +25,9 @@ public class Team {
     @Column(name = "team_name_short")
     private String teamNameShort;
 
+    @Column(name = "is_attacking")
+    private Boolean isAttacking;
+
     @OneToMany(mappedBy = "team",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
@@ -70,6 +73,14 @@ public class Team {
 
     public void setTeamNameShort(String teamNameShort) {
         this.teamNameShort = teamNameShort;
+    }
+
+    public Boolean getAttacking() {
+        return isAttacking;
+    }
+
+    public void setAttacking(Boolean attacking) {
+        isAttacking = attacking;
     }
 
     public List<Player> getPlayers() {

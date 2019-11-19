@@ -202,6 +202,8 @@ public class GameRestController {
         Team visitorTeam = theGame.getVisitorTeam();
         gameService.save(theGame);
         logger.info("Game started.");
+        visitorTeam.setAttacking(true);
+        teamService.save(visitorTeam);
 
         initializeGameDetails(homeTeam, visitorTeam, theGame);
         logger.info("Game details initialized.");
@@ -825,11 +827,17 @@ public class GameRestController {
             nextInning.setInningNumber(currentInningNumber + 1);
             inningService.save(nextInning);
             logger.info("Created new inning.");
+            visitorTeam.setAttacking(true);
+            homeTeam.setAttacking(false);
         } else {
             inning.setCurrentOuts(0);
             inningService.save(inning);
             logger.info("Set current outs to 0.");
+            homeTeam.setAttacking(true);
+            visitorTeam.setAttacking(false);
         }
+        teamService.save(visitorTeam);
+        teamService.save(homeTeam);
         resetOffensePosition(batter.getTeam());
         if ((inning.getInningNumber() == 1) && (pitcher.getTeam().getId() != visitorTeam.getId())) {
             initializeGameDetails(visitorTeam, homeTeam, theGame);

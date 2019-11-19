@@ -97,6 +97,7 @@ public class TeamRestController {
         dto.setId(team.getId());
         dto.setTeamNameLong(team.getTeamNameLong());
         dto.setTeamNameShort(team.getTeamNameShort());
+        dto.setAttacking(team.getAttacking());
 
         if ((team.getPlayers() != null) && (team.getPlayers().size() != 0)) {
             List<Integer> playerDtos = new ArrayList<>();
@@ -137,6 +138,7 @@ public class TeamRestController {
 
         team.setTeamNameLong(dto.getTeamNameLong());
         team.setTeamNameShort(dto.getTeamNameShort());
+        team.setAttacking(dto.getAttacking());
         if ((dto.getPlayers() != null) && (dto.getPlayers().size() != 0)) {
             List<Integer> playerDtos = dto.getPlayers();
             List<Player> players = new ArrayList<>();

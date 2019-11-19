@@ -9,6 +9,8 @@ public class TeamDto {
 
     private String teamNameShort;
 
+    private Boolean isAttacking;
+
     private List<Integer> players;
 
     private List<Integer> homeGames;
@@ -40,6 +42,14 @@ public class TeamDto {
 
     public void setTeamNameShort(String teamNameShort) {
         this.teamNameShort = teamNameShort;
+    }
+
+    public Boolean getAttacking() {
+        return isAttacking;
+    }
+
+    public void setAttacking(Boolean attacking) {
+        isAttacking = attacking;
     }
 
     public List<Integer> getPlayers() {
