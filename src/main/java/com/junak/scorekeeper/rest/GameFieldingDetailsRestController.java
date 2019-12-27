@@ -8,6 +8,8 @@ import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.interfaces.GameFieldingDetailsService;
 import com.junak.scorekeeper.service.interfaces.GameService;
 import com.junak.scorekeeper.service.interfaces.PlayerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +19,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class GameFieldingDetailsRestController {
-    GameFieldingDetailsService gameFieldingDetailsService;
-    GameService gameService;
-    PlayerService playerService;
+    private static final Logger logger = LoggerFactory.getLogger(GameFieldingDetailsRestController.class);
+
+    private GameFieldingDetailsService gameFieldingDetailsService;
+    private GameService gameService;
+    private PlayerService playerService;
 
     @Autowired
     public GameFieldingDetailsRestController(GameFieldingDetailsService gameFieldingDetailsService,
@@ -30,7 +34,7 @@ public class GameFieldingDetailsRestController {
     }
 
     @GetMapping("/gameFieldingDetails")
-    public List<GameFieldingDetailsDto> findAll(){
+    public List<GameFieldingDetailsDto> findAll() {
         List<GameFieldingDetails> gameFieldingDetailsList = gameFieldingDetailsService.findAll();
         List<GameFieldingDetailsDto> dtos = new ArrayList<>();
         for (GameFieldingDetails details : gameFieldingDetailsList) {
@@ -81,15 +85,14 @@ public class GameFieldingDetailsRestController {
 
     @GetMapping("/gameFieldingDetails/game/{gameId}/player/{playerId}")
     public GameFieldingDetailsDto getGameFieldingDetails(@PathVariable int gameId,
-                                                       @PathVariable int playerId) {
+                                                         @PathVariable int playerId) {
         Game game = gameService.findById(gameId);
         Player player = playerService.findById(playerId);
 
         GameFieldingDetails gameFieldingDetails = gameFieldingDetailsService.getGameFieldingDetails(player, game);
 
         if (gameFieldingDetails == null) {
-            GameFieldingDetailsDto gameFieldingDetailsDto = new GameFieldingDetailsDto();
-            return gameFieldingDetailsDto;
+            logger.info("There is no game fielding details of player with id {} and game with id {}", playerId, gameId);
         }
 
         return convertToDto(gameFieldingDetails);
@@ -97,17 +100,18 @@ public class GameFieldingDetailsRestController {
 
     private GameFieldingDetailsDto convertToDto(GameFieldingDetails gameFieldingDetails) {
         GameFieldingDetailsDto dto = new GameFieldingDetailsDto();
-        dto.setId(gameFieldingDetails.getId());
-        dto.setInnings(gameFieldingDetails.getInnings());
-        dto.setTotalChances(gameFieldingDetails.getTotalChances());
-        dto.setPutOut(gameFieldingDetails.getPutOut());
-        dto.setAssists(gameFieldingDetails.getAssists());
-        dto.setErrors(gameFieldingDetails.getErrors());
-        dto.setDoublePlays(gameFieldingDetails.getDoublePlays());
-        dto.setAverageOfErrorsPerTotalChances(gameFieldingDetails.getAverageOfErrorsPerTotalChances());
-        dto.setPlayer(gameFieldingDetails.getPlayer().getId());
-        dto.setGame(gameFieldingDetails.getGame().getId());
-
+        if (gameFieldingDetails != null) {
+            dto.setId(gameFieldingDetails.getId());
+            dto.setInnings(gameFieldingDetails.getInnings());
+            dto.setTotalChances(gameFieldingDetails.getTotalChances());
+            dto.setPutOut(gameFieldingDetails.getPutOut());
+            dto.setAssists(gameFieldingDetails.getAssists());
+            dto.setErrors(gameFieldingDetails.getErrors());
+            dto.setDoublePlays(gameFieldingDetails.getDoublePlays());
+            dto.setAverageOfErrorsPerTotalChances(gameFieldingDetails.getAverageOfErrorsPerTotalChances());
+            dto.setPlayer(gameFieldingDetails.getPlayer().getId());
+            dto.setGame(gameFieldingDetails.getGame().getId());
+        }
         return dto;
     }
 }

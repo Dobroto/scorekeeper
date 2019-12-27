@@ -33,7 +33,7 @@ public class Player {
     private String defencePosition;
 
     @Column(name = "offense_position")
-    private String offencePosition;
+    private String offensePosition;
 
     @Column(name = "batting_order")
     private int battingOrder;
@@ -195,12 +195,12 @@ public class Player {
         this.wasPitcher = wasPitcher;
     }
 
-    public String getOffencePosition() {
-        return offencePosition;
+    public String getOffensePosition() {
+        return offensePosition;
     }
 
-    public void setOffencePosition(String offencePosition) {
-        this.offencePosition = offencePosition;
+    public void setOffensePosition(String offensePosition) {
+        this.offensePosition = offensePosition;
     }
 
     public PlayerHittingDetails getPlayerHittingDetails() {

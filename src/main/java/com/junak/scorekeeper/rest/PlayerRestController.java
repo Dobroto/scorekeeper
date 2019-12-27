@@ -195,7 +195,7 @@ public class PlayerRestController {
         playerDto.setJerseyNumber(player.getJerseyNumber());
         playerDto.setStarter(player.isStarter());
         playerDto.setDefencePosition(player.getDefencePosition());
-        playerDto.setOffencePosition(player.getOffencePosition());
+        playerDto.setOffencePosition(player.getOffensePosition());
         playerDto.setBattingOrder(player.getBattingOrder());
         playerDto.setBallCount(player.getBallCount());
         playerDto.setStrikeCount(player.getStrikeCount());
@@ -253,7 +253,7 @@ public class PlayerRestController {
         player.setJerseyNumber(playerDto.getJerseyNumber());
         player.setStarter(playerDto.isStarter());
         player.setDefencePosition(playerDto.getDefencePosition());
-        player.setOffencePosition(playerDto.getOffencePosition());
+        player.setOffensePosition(playerDto.getOffencePosition());
         player.setBattingOrder(playerDto.getBattingOrder());
         player.setBallCount(playerDto.getBallCount());
         player.setStrikeCount(playerDto.getStrikeCount());

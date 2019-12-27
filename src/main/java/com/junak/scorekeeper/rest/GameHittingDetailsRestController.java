@@ -8,6 +8,8 @@ import com.junak.scorekeeper.rest.exceptions.GameNotFoundException;
 import com.junak.scorekeeper.service.interfaces.GameHittingDetailsService;
 import com.junak.scorekeeper.service.interfaces.GameService;
 import com.junak.scorekeeper.service.interfaces.PlayerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +19,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class GameHittingDetailsRestController {
-    GameHittingDetailsService gameHittingDetailsService;
-    GameService gameService;
-    PlayerService playerService;
+    private static final Logger logger = LoggerFactory.getLogger(GameHittingDetailsRestController.class);
+    private GameHittingDetailsService gameHittingDetailsService;
+    private GameService gameService;
+    private PlayerService playerService;
 
     @Autowired
     public GameHittingDetailsRestController(GameHittingDetailsService gameHittingDetailsService,
@@ -79,6 +82,7 @@ public class GameHittingDetailsRestController {
         return dtos;
     }
 
+    //TODO URL could be without game and player
     @GetMapping("/gameHittingDetails/game/{gameId}/player/{playerId}")
     public GameHittingDetailsDto getGameHittingDetails(@PathVariable int gameId,
                                                        @PathVariable int playerId) {
@@ -88,8 +92,7 @@ public class GameHittingDetailsRestController {
         GameHittingDetails gameHittingDetails = gameHittingDetailsService.getGameHittingDetails(player, game);
 
         if (gameHittingDetails == null) {
-            GameHittingDetailsDto gameHittingDetailsDto = new GameHittingDetailsDto();
-            return gameHittingDetailsDto;
+            logger.info("There is no game hitting details of player with id {} and game with id {}", playerId, gameId);
         }
 
         return convertToDto(gameHittingDetails);
@@ -97,30 +100,31 @@ public class GameHittingDetailsRestController {
 
     private GameHittingDetailsDto convertToDto(GameHittingDetails gameHittingDetails) {
         GameHittingDetailsDto dto = new GameHittingDetailsDto();
-        dto.setId(gameHittingDetails.getId());
-        dto.setPlateAppearances(gameHittingDetails.getPlateAppearances());
-        dto.setSacrificeHits(gameHittingDetails.getSacrificeHits());
-        dto.setBaseForBalls(gameHittingDetails.getBaseForBalls());
-        dto.setHitByPitches(gameHittingDetails.getHitByPitches());
-        dto.setAtBat(gameHittingDetails.getAtBat());
-        dto.setRuns(gameHittingDetails.getRuns());
-        dto.setHits(gameHittingDetails.getHits());
-        dto.setDoubleHit(gameHittingDetails.getDoubleHit());
-        dto.setTripleHit(gameHittingDetails.getTripleHit());
-        dto.setHomeRun(gameHittingDetails.getHomeRun());
-        dto.setRunBattedIn(gameHittingDetails.getRunBattedIn());
-        dto.setStrikeOut(gameHittingDetails.getStrikeOut());
-        dto.setStolenBase(gameHittingDetails.getStolenBase());
-        dto.setCaughtStealing(gameHittingDetails.getStolenBase());
-        dto.setSacrificeFlies(gameHittingDetails.getSacrificeFlies());
-        dto.setTotalBases(gameHittingDetails.getTotalBases());
-        dto.setBattingAverage(gameHittingDetails.getBattingAverage());
-        dto.setOnBasePercentage(gameHittingDetails.getOnBasePercentage());
-        dto.setSluggingPercentage(gameHittingDetails.getSluggingPercentage());
-        dto.setOnBaseSlugging(gameHittingDetails.getOnBaseSlugging());
-        dto.setPlayer(gameHittingDetails.getPlayer().getId());
-        dto.setGame(gameHittingDetails.getGame().getId());
-
+        if (gameHittingDetails != null) {
+            dto.setId(gameHittingDetails.getId());
+            dto.setPlateAppearances(gameHittingDetails.getPlateAppearances());
+            dto.setSacrificeHits(gameHittingDetails.getSacrificeHits());
+            dto.setBaseForBalls(gameHittingDetails.getBaseForBalls());
+            dto.setHitByPitches(gameHittingDetails.getHitByPitches());
+            dto.setAtBat(gameHittingDetails.getAtBat());
+            dto.setRuns(gameHittingDetails.getRuns());
+            dto.setHits(gameHittingDetails.getHits());
+            dto.setDoubleHit(gameHittingDetails.getDoubleHit());
+            dto.setTripleHit(gameHittingDetails.getTripleHit());
+            dto.setHomeRun(gameHittingDetails.getHomeRun());
+            dto.setRunBattedIn(gameHittingDetails.getRunBattedIn());
+            dto.setStrikeOut(gameHittingDetails.getStrikeOut());
+            dto.setStolenBase(gameHittingDetails.getStolenBase());
+            dto.setCaughtStealing(gameHittingDetails.getStolenBase());
+            dto.setSacrificeFlies(gameHittingDetails.getSacrificeFlies());
+            dto.setTotalBases(gameHittingDetails.getTotalBases());
+            dto.setBattingAverage(gameHittingDetails.getBattingAverage());
+            dto.setOnBasePercentage(gameHittingDetails.getOnBasePercentage());
+            dto.setSluggingPercentage(gameHittingDetails.getSluggingPercentage());
+            dto.setOnBaseSlugging(gameHittingDetails.getOnBaseSlugging());
+            dto.setPlayer(gameHittingDetails.getPlayer().getId());
+            dto.setGame(gameHittingDetails.getGame().getId());
+        }
         return dto;
     }
 }
