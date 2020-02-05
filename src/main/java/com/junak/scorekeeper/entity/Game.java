@@ -93,6 +93,11 @@ public class Game {
                     CascadeType.DETACH, CascadeType.REFRESH})
     private List<Inning> innings;
 
+    @OneToMany(mappedBy = "game",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Play> plays;
+
     public Game() {
 
     }
@@ -231,5 +236,13 @@ public class Game {
 
     public void setInnings(List<Inning> innings) {
         this.innings = innings;
+    }
+
+    public List<Play> getPlays() {
+        return plays;
+    }
+
+    public void setPlays(List<Play> plays) {
+        this.plays = plays;
     }
 }

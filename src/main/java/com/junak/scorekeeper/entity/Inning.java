@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "inning")
@@ -21,6 +22,11 @@ public class Inning {
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "game_id")
     private Game game;
+
+    @OneToMany(mappedBy = "inning",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    private List<Play> plays;
 
     @Column(name = "inning_number")
     private int inningNumber;
@@ -52,6 +58,14 @@ public class Inning {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public List<Play> getPlays() {
+        return plays;
+    }
+
+    public void setPlays(List<Play> plays) {
+        this.plays = plays;
     }
 
     public int getInningNumber() {

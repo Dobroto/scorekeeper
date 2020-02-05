@@ -31,6 +31,7 @@ public class GameRestController {
     private PlayerFieldingDetailsService playerFieldingDetailsService;
     private PlayerHittingDetailsService playerHittingDetailsService;
     private PlayerPitchingDetailsService playerPitchingDetailsService;
+    private PlayService playService;
 
     @Autowired
     public GameRestController(GameService gameService, PlayerService playerService,
@@ -41,7 +42,8 @@ public class GameRestController {
                               GamePitchingDetailsService gamePitchingDetailsService,
                               PlayerFieldingDetailsService playerFieldingDetailsService,
                               PlayerHittingDetailsService playerHittingDetailsService,
-                              PlayerPitchingDetailsService playerPitchingDetailsService) {
+                              PlayerPitchingDetailsService playerPitchingDetailsService,
+                              PlayService playService) {
 
         this.gameService = gameService;
         this.playerService = playerService;
@@ -54,6 +56,7 @@ public class GameRestController {
         this.playerFieldingDetailsService = playerFieldingDetailsService;
         this.playerHittingDetailsService = playerHittingDetailsService;
         this.playerPitchingDetailsService = playerPitchingDetailsService;
+        this.playService = playService;
     }
 
     @GetMapping("/games")
@@ -150,7 +153,7 @@ public class GameRestController {
             }
         }
 
-        if ((inningList != null) && (inningList.size() > 0)) {
+        if ((inningList != null) && (inningList.isEmpty())) {
             Inning[] inningsToDeleteArr = new Inning[inningList.size()];
 
             for (int i = 0; i < inningsToDeleteArr.length; i++) {
@@ -235,10 +238,14 @@ public class GameRestController {
         Game theGame = gameService.findById(gameId);
         theGame.setLastCommand("ball");
         Player batter = playerService.findById(batterId);
+        Player pitcher = playerService.findById(pitcherId);
+        Inning inning = inningService.getCurrentInning(theGame);
         int currentNumberOfBalls = batter.getBallCount();
         currentNumberOfBalls++;
+
         if (currentNumberOfBalls > 3) {
             logger.info("The pitcher threw four balls.");
+
             batter.setBallCount(0);
             playerService.save(batter);
             walk(gameId, pitcherId, batterId);
@@ -246,13 +253,49 @@ public class GameRestController {
         }
         batter.setBallCount(currentNumberOfBalls);
         playerService.save(batter);
-        //TODO livescore
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+
+        play.setAction(String.format("%s %s pitched outside the strike zone.", pitcher.getFirstName(), pitcher.getLastName()));
+        playService.save(play);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/walk")
     public void walk(@PathVariable int gameId,
                      @PathVariable int pitcherId, @PathVariable int batterId) {
+        
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
 
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s walked to first base.", batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
+
+        unintentionalWalk(gameId, pitcherId, batterId);
+    }
+
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/intentionalWalk")
+    public void intentionalWalk(@PathVariable int gameId,
+                                @PathVariable int pitcherId, @PathVariable int batterId) {
+
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s walked to first base intentionally.", batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
+
+        unintentionalWalk(gameId, pitcherId, batterId);
+    }
+
+    private void unintentionalWalk(int gameId, int pitcherId, int batterId) {
         Game theGame = gameService.findById(gameId);
         theGame.setLastCommand("walk");
         Player pitcher = playerService.findById(pitcherId);
@@ -286,26 +329,26 @@ public class GameRestController {
 
         Team offensiveTeam = batter.getTeam();
         pushRunnersWithOneBase(batter, pitcher, offensiveTeam, theGame);
-
-        //TODO livescore
     }
 
-    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/intentionalWalk")
-    public void intentionalWalk(@PathVariable int gameId,
-                     @PathVariable int pitcherId, @PathVariable int batterId) {
-        walk(gameId, pitcherId, batterId);
-
-        //TODO livescore
-    }
-
-    @PutMapping("/games/{pitcherId}/{batterId}/strike")
-    public void strike(@PathVariable int pitcherId, @PathVariable int batterId) {
+    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strike")
+    public void strike(@PathVariable int gameId, @PathVariable int pitcherId, @PathVariable int batterId) {
         Player batter = playerService.findById(batterId);
+        Player pitcher = playerService.findById(pitcherId);
         int currentNumberOfStrikes = batter.getStrikeCount();
         currentNumberOfStrikes++;
         batter.setStrikeCount(currentNumberOfStrikes);
         playerService.save(batter);
         logger.info("Pitcher with id {} made a strike to batter with id {}", pitcherId, batterId);
+
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s made a strike to %s %s.", pitcher.getFirstName(), pitcher.getLastName(),
+                batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strikeoutLooking")
@@ -313,6 +356,18 @@ public class GameRestController {
                                  @PathVariable int pitcherId, @PathVariable int batterId) {
 
         strikeout(gameId, pitcherId, batterId);
+
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
+        Player pitcher = playerService.findById(pitcherId);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s made a strikeout to %s %s while looking.", pitcher.getFirstName(), pitcher.getLastName(),
+                batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/strikeoutSwinging")
@@ -320,6 +375,18 @@ public class GameRestController {
                                   @PathVariable int pitcherId, @PathVariable int batterId) {
 
         strikeout(gameId, pitcherId, batterId);
+
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
+        Player pitcher = playerService.findById(pitcherId);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s made a strikeout to %s %s while swinging.", pitcher.getFirstName(), pitcher.getLastName(),
+                batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/caughtFoulTip")
@@ -327,6 +394,18 @@ public class GameRestController {
                               @PathVariable int pitcherId, @PathVariable int batterId) {
 
         strikeout(gameId, pitcherId, batterId);
+
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
+        Player pitcher = playerService.findById(pitcherId);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s made a foul tip to %s %s.", pitcher.getFirstName(), pitcher.getLastName(),
+                batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/buntFoul")
@@ -334,6 +413,18 @@ public class GameRestController {
                          @PathVariable int pitcherId, @PathVariable int batterId) {
 
         strikeout(gameId, pitcherId, batterId);
+
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
+        Player pitcher = playerService.findById(pitcherId);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s made a foul bunt to %s %s.", pitcher.getFirstName(), pitcher.getLastName(),
+                batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/out/dropped3rdStrike")
@@ -358,7 +449,15 @@ public class GameRestController {
     @PutMapping("/games/{gameId}/{batterId}/foul")
     public void foul(@PathVariable int gameId, @PathVariable int batterId) {
 
-        //TODO only livescore
+        Game theGame = gameService.findById(gameId);
+        Inning inning = inningService.getCurrentInning(theGame);
+        Player batter = playerService.findById(batterId);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s made a foul.", batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
     }
 
 //    @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/out")
@@ -404,6 +503,13 @@ public class GameRestController {
         inning.setCurrentOuts(inning.getCurrentOuts() + 1);
         inningService.save(inning);
 
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s was caught stealing by %s %s.", runner.getFirstName(), runner.getLastName(),
+                baseman.getFirstName(), baseman.getLastName()));
+        playService.save(play);
+
         if (inning.getCurrentOuts() == 3) {
             switchFields(theGame, inning, pitcher, runner);
             logger.info("Teams switched fields.");
@@ -427,14 +533,22 @@ public class GameRestController {
         gameHittingDetailsService.save(gameHittingDetailsRunner);
         logger.info("Game Hitting Details: Increased stolen base of runner with id {}.", runnerId);
 
+        Inning inning = inningService.getCurrentInning(theGame);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s stole %s.", runner.getFirstName(), runner.getLastName(), baseStolen));
+        playService.save(play);
+
+        runner.setOffensePosition(baseStolen);
         if (baseStolen.equals(Constants.runnerHomeBase)) {
             scoreARun(runner, null, pitcher, theGame, false, true);
+            runner.setOffensePosition(null);
         }
-        runner.setOffensePosition(baseStolen);
+
         playerService.save(runner);
         logger.info("Runner with id {} stole {}.", runnerId, baseStolen);
-
-        //TODO livescore
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/hitSingle")
@@ -465,6 +579,14 @@ public class GameRestController {
         batter.setOffensePosition(Constants.runnerFirstBase);
         playerService.save(batter);
         logger.info("Batter with id {} moved to first base.", batterId);
+
+        Inning inning = inningService.getCurrentInning(theGame);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s hit single.", batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
 
         setNextBatter(batter, theGame);
     }
@@ -497,6 +619,14 @@ public class GameRestController {
         playerService.save(batter);
         logger.info("Batter with id {} moved to second base.", batterId);
 
+        Inning inning = inningService.getCurrentInning(theGame);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s hit double.", batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
+
         setNextBatter(batter, theGame);
     }
 
@@ -527,6 +657,14 @@ public class GameRestController {
         batter.setOffensePosition(Constants.runnerThirdBase);
         playerService.save(batter);
         logger.info("Batter with id {} moved to third base.", batterId);
+
+        Inning inning = inningService.getCurrentInning(theGame);
+
+        Play play = new Play();
+        play.setInning(inning);
+        play.setGame(theGame);
+        play.setAction(String.format("%s %s hit triple.", batter.getFirstName(), batter.getLastName()));
+        playService.save(play);
 
         setNextBatter(batter, theGame);
     }
@@ -567,6 +705,14 @@ public class GameRestController {
         //increase hits of team
         increaseHitsOfTeam(theGame, batter);
 
+        Inning inning = inningService.getCurrentInning(theGame);
+
+        Play batterPlay = new Play();
+        batterPlay.setInning(inning);
+        batterPlay.setGame(theGame);
+        batterPlay.setAction(String.format("%s %s made a home run.", batter.getFirstName(), batter.getLastName()));
+        playService.save(batterPlay);
+
         scoreARun(batter, batter, pitcher, theGame, true, true);
 
         Player firstBaseRunner = playerService.getFirstBaseRunner(batter.getTeam());
@@ -574,22 +720,43 @@ public class GameRestController {
         Player thirdBaseRunner = playerService.getThirdBaseRunner(batter.getTeam());
 
         if (firstBaseRunner != null) {
+            Play firstBaseRunnerPlay = new Play();
+            firstBaseRunnerPlay.setInning(inning);
+            firstBaseRunnerPlay.setGame(theGame);
+            firstBaseRunnerPlay.setAction(String.format("%s %s reached home base.", firstBaseRunner.getFirstName(),
+                    firstBaseRunner.getLastName()));
+            playService.save(firstBaseRunnerPlay);
+
             scoreARun(firstBaseRunner, batter, pitcher, theGame, true, true);
-            firstBaseRunner.setOffensePosition(Constants.runnerHomeBase);
+            firstBaseRunner.setOffensePosition(null);
             playerService.save(firstBaseRunner);
         }
         if (secondBaseRunner != null) {
+            Play secondBaseRunnerPlay = new Play();
+            secondBaseRunnerPlay.setInning(inning);
+            secondBaseRunnerPlay.setGame(theGame);
+            secondBaseRunnerPlay.setAction(String.format("%s %s reached home base.", secondBaseRunner.getFirstName(),
+                    secondBaseRunner.getLastName()));
+            playService.save(secondBaseRunnerPlay);
+
             scoreARun(secondBaseRunner, batter, pitcher, theGame, true, true);
-            secondBaseRunner.setOffensePosition(Constants.runnerHomeBase);
+            secondBaseRunner.setOffensePosition(null);
             playerService.save(secondBaseRunner);
         }
         if (thirdBaseRunner != null) {
+            Play thirdBaseRunnerPlay = new Play();
+            thirdBaseRunnerPlay.setInning(inning);
+            thirdBaseRunnerPlay.setGame(theGame);
+            thirdBaseRunnerPlay.setAction(String.format("%s %s reached home base.", thirdBaseRunner.getFirstName(),
+                    thirdBaseRunner.getLastName()));
+            playService.save(thirdBaseRunnerPlay);
+
             scoreARun(thirdBaseRunner, batter, pitcher, theGame, true, true);
-            thirdBaseRunner.setOffensePosition(Constants.runnerHomeBase);
+            thirdBaseRunner.setOffensePosition(null);
             playerService.save(thirdBaseRunner);
         }
 
-        batter.setOffensePosition(Constants.runnerHomeBase);
+        batter.setOffensePosition(null);
         playerService.save(batter);
         logger.info("Batter with id {} moved to home base.", batterId);
 
@@ -599,8 +766,6 @@ public class GameRestController {
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/inParkHomeRun")
     public void inParkHomeRun(@PathVariable int pitcherId, @PathVariable int gameId, @PathVariable int batterId) {
         homeRun(pitcherId, gameId, batterId);
-
-        //TODO livescore
     }
 
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/safe/bunt")
@@ -707,6 +872,14 @@ public class GameRestController {
         batter.setOffensePosition(Constants.batter);
         playerService.save(batter);
 
+        Inning inning = inningService.getCurrentInning(theGame);
+        Play batterPlay = new Play();
+        batterPlay.setInning(inning);
+        batterPlay.setGame(theGame);
+        batterPlay.setAction(String.format("%s %s is at bat.", batter.getFirstName(),
+                batter.getLastName()));
+        playService.save(batterPlay);
+
         PlayerHittingDetails playerHittingDetails = batter.getPlayerHittingDetails();
 
         if (gameHittingDetailsService.getGameHittingDetails(batter, theGame) == null) {
@@ -789,6 +962,7 @@ public class GameRestController {
         Player firstBaseRunner = playerService.getFirstBaseRunner(offensiveTeam);
         Player secondBaseRunner = playerService.getSecondBaseRunner(offensiveTeam);
         Player thirdBaseRunner = playerService.getThirdBaseRunner(offensiveTeam);
+        Inning inning = inningService.getCurrentInning(theGame);
 
         batter.setOffensePosition(Constants.runnerFirstBase);
         playerService.save(batter);
@@ -801,17 +975,42 @@ public class GameRestController {
             logger.info("Batter with id {} pushed player with id {} from first base to second base.",
                     batter.getId(), firstBaseRunner.getId());
 
+            Play firstBaseRunnerPlay = new Play();
+            firstBaseRunnerPlay.setInning(inning);
+            firstBaseRunnerPlay.setGame(theGame);
+            firstBaseRunnerPlay.setAction(String.format("%s %s pushed %s %s from first base to second base.",
+                    batter.getFirstName(), batter.getLastName(),
+                    firstBaseRunner.getFirstName(), firstBaseRunner.getLastName()));
+            playService.save(firstBaseRunnerPlay);
+
             if (secondBaseRunner != null) {
                 secondBaseRunner.setOffensePosition(Constants.runnerThirdBase);
                 playerService.save(secondBaseRunner);
                 logger.info("Runner from first base with id {} pushed runner with id {} from second to third base.",
                         firstBaseRunner.getId(), secondBaseRunner.getId());
 
+                Play secondBaseRunnerPlay = new Play();
+                secondBaseRunnerPlay.setInning(inning);
+                secondBaseRunnerPlay.setGame(theGame);
+                secondBaseRunnerPlay.setAction(String.format("%s %s pushed %s %s from second base to third base.",
+                        firstBaseRunner.getFirstName(), firstBaseRunner.getLastName(),
+                        secondBaseRunner.getFirstName(), secondBaseRunner.getLastName()));
+                playService.save(secondBaseRunnerPlay);
+
                 if (thirdBaseRunner != null) {
                     thirdBaseRunner.setOffensePosition(Constants.runnerHomeBase);
                     playerService.save(thirdBaseRunner);
                     logger.info("Runner from second base with id {} pushed runner with id {} from third to home base.",
                             secondBaseRunner.getId(), thirdBaseRunner.getId());
+
+                    Play thirdBaseRunnerPlay = new Play();
+                    thirdBaseRunnerPlay.setInning(inning);
+                    thirdBaseRunnerPlay.setGame(theGame);
+                    thirdBaseRunnerPlay.setAction(String.format("%s %s pushed %s %s from third base to home base.",
+                            secondBaseRunner.getFirstName(), secondBaseRunner.getLastName(),
+                            thirdBaseRunner.getFirstName(), thirdBaseRunner.getLastName()));
+                    playService.save(thirdBaseRunnerPlay);
+
                     scoreARun(thirdBaseRunner, batter, pitcher, theGame, true, true);
                 }
             }
