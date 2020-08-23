@@ -89,9 +89,7 @@ public class GameRestController {
 
         gameDto.setId(0);
 
-        Game theGame = gameService.save(convertToEntity(gameDto));
-
-        return theGame;
+       return gameService.save(convertToEntity(gameDto));
     }
 
     @PutMapping("/games")
@@ -126,7 +124,7 @@ public class GameRestController {
         tempGame.setInnings(null);
         gameService.save(tempGame);
 
-        if ((gameHittingDetailsList != null) && (gameHittingDetailsList.size() > 0)) {
+        if ((gameHittingDetailsList != null) && (!gameHittingDetailsList.isEmpty())) {
             GameHittingDetails[] hittingDetailsToDeleteArr = new GameHittingDetails[gameHittingDetailsList.size()];
 
             for (int i = 0; i < hittingDetailsToDeleteArr.length; i++) {
@@ -135,7 +133,7 @@ public class GameRestController {
             }
         }
 
-        if ((gamePitchingDetailsList != null) && (gamePitchingDetailsList.size() > 0)) {
+        if ((gamePitchingDetailsList != null) && (!gamePitchingDetailsList.isEmpty())) {
             GamePitchingDetails[] pitchingDetailsToDeleteArr = new GamePitchingDetails[gamePitchingDetailsList.size()];
 
             for (int i = 0; i < pitchingDetailsToDeleteArr.length; i++) {
@@ -144,7 +142,7 @@ public class GameRestController {
             }
         }
 
-        if ((gameFieldingDetailsList != null) && (gameFieldingDetailsList.size() > 0)) {
+        if ((gameFieldingDetailsList != null) && (!gameFieldingDetailsList.isEmpty())) {
             GameFieldingDetails[] fieldingDetailsToUpdateArr = new GameFieldingDetails[gameFieldingDetailsList.size()];
 
             for (int i = 0; i < fieldingDetailsToUpdateArr.length; i++) {
@@ -153,7 +151,7 @@ public class GameRestController {
             }
         }
 
-        if ((inningList != null) && (inningList.isEmpty())) {
+        if ((inningList != null) && (!inningList.isEmpty())) {
             Inning[] inningsToDeleteArr = new Inning[inningList.size()];
 
             for (int i = 0; i < inningsToDeleteArr.length; i++) {
@@ -265,7 +263,7 @@ public class GameRestController {
     @PutMapping("/games/{gameId}/{pitcherId}/{batterId}/walk")
     public void walk(@PathVariable int gameId,
                      @PathVariable int pitcherId, @PathVariable int batterId) {
-        
+
         Game theGame = gameService.findById(gameId);
         Inning inning = inningService.getCurrentInning(theGame);
         Player batter = playerService.findById(batterId);
@@ -1020,15 +1018,15 @@ public class GameRestController {
     private void scoreARun(Player runner, Player batter, Player pitcher, Game theGame,
                            boolean withBatterHelp, boolean isEarned) {
         //increase player runs of runner
-        PlayerHittingDetails PlayerHittingDetailsRunner = runner.getPlayerHittingDetails();
-        PlayerHittingDetailsRunner.setRuns(PlayerHittingDetailsRunner.getRuns() + 1);
-        playerHittingDetailsService.save(PlayerHittingDetailsRunner);
+        PlayerHittingDetails playerHittingDetailsRunner = runner.getPlayerHittingDetails();
+        playerHittingDetailsRunner.setRuns(playerHittingDetailsRunner.getRuns() + 1);
+        playerHittingDetailsService.save(playerHittingDetailsRunner);
         logger.info("Increase player runs by runner with id {}.", runner.getId());
 
         //increase game runs of runner
-        GameHittingDetails GameHittingDetailsRunner = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
-        GameHittingDetailsRunner.setRuns(GameHittingDetailsRunner.getRuns() + 1);
-        gameHittingDetailsService.save(GameHittingDetailsRunner);
+        GameHittingDetails gameHittingDetailsRunner = gameHittingDetailsService.getGameHittingDetails(runner, theGame);
+        gameHittingDetailsRunner.setRuns(gameHittingDetailsRunner.getRuns() + 1);
+        gameHittingDetailsService.save(gameHittingDetailsRunner);
         logger.info("Increase game runs by runner with id {}.", runner.getId());
 
         if (withBatterHelp) {
